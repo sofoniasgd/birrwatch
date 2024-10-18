@@ -43,5 +43,73 @@
 # 
 # 
 bank_conf = {
-    "CBE"
+    "CBET" : {
+        "url" : "https://combanketh.et/en/exchange-rate/"
+    },
+    "DEET" : {
+        "url": "https://dbe.com.et/"
+    },
+    "AWIN" : {
+        "URL" : "https://awashbank.com/exchange-historical/"
+    },
+    "DASH" : {
+        "URL" : "https://dashenbanksc.com/daily-exchange-rates/"
+    },
+    "ABYS" : {
+        "URL" : "https://bankofabyssinia.com/"
+    },
+    "WEGA" : {
+        "URL" : "https://www.wegagen.com/"
+    },
+    "UNTD" : {
+        "URL" : "https://www.hibretbank.com.et/"
+    },
+    "NIBI" : {
+        "URL" : "https://www.nibbanksc.com/exchange-rate/"
+    },
+    "CBOR" : {
+        "URL" : "https://coopbankoromia.com.et/daily-exchange-rates/"
+    },
+    "LIBS" : {
+        "URL" : "https://anbesabank.com/"
+    },
+    "ORIR" : {
+        "URL" : "https://www.oromiabank.com/"
+    },
+    "ZEME" : {
+        "URL" : "https://www.zemenbank.com/"
+    },
+    "BUNA" : {
+        "URL" : "https://bunnabanksc.com/"
+    },
+    "BERH" : {
+        "URL" : "https://berhanbanksc.com/"
+    },
+    "ABAY" : {
+        "URL" : "https://abaybank.com.et/"
+    },
+    "ABSC" : {
+        "URL" : "https://addisbanksc.com/"
+    },
+    "ENAT" : {
+        "URL" : "https://www.enatbanksc.com/"
+    },
+    "DEGA" : {
+        "URL" : " https://www.globalbankethiopia.com/"
+    },
+    "ZEMZ" : {
+        "URL" : "https://zamzambank.com/exchange-rates/todays-exchange-rate/"
+    },
+    "GOBT" : {
+        "URL" : "https://www.gohbetbank.com/todays-exchange-rate/"
+    },
+    "HIJR" : {
+        "URL" : "https://hijra-bank.com/"
+    },
+    "TSCP" : {
+        "URL" : "https://tsehaybank.com.et/exchange-rate/"
+    },
+    "AMHR" : {
+        "URL" : "https://www.amharabank.com.et/exchange-rate/"
+    }
 }
