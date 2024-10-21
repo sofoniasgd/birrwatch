@@ -61,7 +61,7 @@ def DEET(URL):
     driver = webdriver.Chrome(service=service)
     driver.get(URL)
     # Wait for the dropdown to be present
-    wait = WebDriverWait(driver, 10)
+    wait = WebDriverWait(driver, 5)
     dropdown_element = wait.until(EC.presence_of_element_located((By.NAME, "tablepress-1_length")))
     
     select = Select(dropdown_element)
@@ -75,7 +75,7 @@ def DEET(URL):
     table = soup.find("table", id="tablepress-1")
     # print(table)
     rows = table.tbody.find_all("tr")
-    print(type(rows))
+
     for row in rows:
         code = row.find("td", class_="column-2").text
         cashBuying = row.find("td", class_="column-3").text
@@ -85,9 +85,41 @@ def DEET(URL):
 
 
 def AWIN(URL):
-    print(URL)
+    try:
+        response = requests.get(URL)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print("Error fetching the webpage: {}".format(e))
+    # parse data
+    soup = BeautifulSoup(response.content, 'html.parser')
+    table = soup.find("table", id="exchange-rates-table")
+    rows = table.tbody.find_all("tr")
+
+    for row in rows:
+        tds = row.find_all("td")
+        currency = tds[0].text
+        code = currency[1:4]
+        cashBuying = tds[1].text
+        cashSelling = tds[2].text
+        tx_buying = tds[3].text
+        tx_selling = tds[4].text
+        print("{}:\tCB:{}\tCS:{}\ttxB:{}\ttxS:{}".format(code, cashBuying, cashSelling, tx_buying, tx_selling))
 
 def DASH(URL):
+    # have to use selenium to select between transaction and cash rate tables
+    
+    # Path to ChromeDriver executable
+    chrome_driver_path = "./chromedriver"
+
+    # Set up the Chrome WebDriver and get url
+    service = Service(chrome_driver_path)
+    driver = webdriver.Chrome(service=service)
+    driver.get(URL)
+    # Wait for the dropdown to be present
+    wait = WebDriverWait(driver, 5)
+    dropdown_element = wait.until(EC.presence_of_element_located((By.CLASSNAME, "et_pb_tab_content")))
+    
+
     print(URL)
 
 def ABYS(URL):
@@ -148,4 +180,7 @@ def AMHR(URL):
     print(URL)
 
 if __name__ == '__main__':
-    DEET('https://dbe.com.et/')
+    # CBET('https://combanketh.et/cbeapi/daily-exchange-rates')
+    # DEET('https://dbe.com.et/')
+    # AWIN('https://awashbank.com/exchange-historical/')
+    DASH('https://dashenbanksc.com/daily-exchange-rates/')
