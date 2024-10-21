@@ -2,9 +2,9 @@
 # list of banks with exchange info on their website as of oct18, 2024
 # source: National bank of ethiopia, https://nbe.gov.et/financial-institutions/banks/
 # ========================================================================================
-# CODE |        Bank name              |        url
+# CODE |        Bank name              |             url
 # ----------------------------------------------------------------------------------------
-# CBET - Commercial Bank of Ethiopia    https://combanketh.et/en/exchange-rate
+# CBET - Commercial Bank of Ethiopia    API https://combanketh.et/en/exchange-rate
 # DEET - Development Bank of Ethiopia   https://dbe.com.et/
 # AWIN - Awash Bank S.C.                https://awashbank.com/exchange-historical/
 # DASH - Dashen Bank S.C.               https://dashenbanksc.com/daily-exchange-rates/
@@ -36,18 +36,13 @@
 # SDMA - Sidama Bank S.C.               telegram https://t.me/sidamabanksc
 # RMSI - Rammis Bank S.C.               telegram https://t.me/rammisbankk
 # SKTE - Siket Bank S.C                 NO DATA
-# 
-# 
-# 
-# 
-# 
-# 
-bank_conf = {
+
+bank_url = {
     "CBET" : {
-        "url" : "https://combanketh.et/en/exchange-rate/"
+        "URL" : "https://combanketh.et/cbeapi/daily-exchange-rates"
     },
     "DEET" : {
-        "url": "https://dbe.com.et/"
+        "URL": "https://dbe.com.et/"
     },
     "AWIN" : {
         "URL" : "https://awashbank.com/exchange-historical/"
@@ -95,7 +90,7 @@ bank_conf = {
         "URL" : "https://www.enatbanksc.com/"
     },
     "DEGA" : {
-        "URL" : " https://www.globalbankethiopia.com/"
+        "URL" : "https://www.globalbankethiopia.com/"
     },
     "ZEMZ" : {
         "URL" : "https://zamzambank.com/exchange-rates/todays-exchange-rate/"
