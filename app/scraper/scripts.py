@@ -3,6 +3,12 @@
 
 from bs4 import BeautifulSoup
 import requests
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import Select
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 def CBET(URL): # API call
     # use Chrome-like headers
@@ -40,10 +46,43 @@ def CBET(URL): # API call
         tx_buying = item["transactionalBuying"]
         tx_selling = item["transactionalSelling"]
         # store values
-        print("{}:\ttxS:{}\ttxB:{}\tCs:{}\tCB:{}".format(code, cashBuying, cashSelling, tx_buying, tx_selling))
+        print("{}:\tCB:{}\tCS:{}\ttxB:{}\ttxS:{}".format(code, cashBuying, cashSelling, tx_buying, tx_selling))
 
 def DEET(URL):
-    print(URL)
+    # since the table has a selector for how many rows to show
+    # i have to use selenium here to interact with the table
+    # to show the maximum number of results
+
+    # Path to ChromeDriver executable
+    chrome_driver_path = "/usr/bin/chromedriver"
+
+    # Set up the Chrome WebDriver and get url
+    service = Service(chrome_driver_path)
+    driver = webdriver.Chrome(service=service)
+    driver.get(URL)
+    # Wait for the dropdown to be present
+    wait = WebDriverWait(driver, 10)
+    dropdown_element = wait.until(EC.presence_of_element_located((By.NAME, "tablepress-1_length")))
+    
+    select = Select(dropdown_element)
+    # Select an option by value
+    select.select_by_value("50")
+    dropdown_element = wait.until(EC.presence_of_element_located((By.ID, "tablepress-1")))
+    # Get the page source and parse it with BeautifulSoup
+    page_html = driver.page_source
+    soup = BeautifulSoup(page_html, 'html.parser')
+    # get table
+    table = soup.find("table", id="tablepress-1")
+    # print(table)
+    rows = table.tbody.find_all("tr")
+    print(type(rows))
+    for row in rows:
+        code = row.find("td", class_="column-2").text
+        cashBuying = row.find("td", class_="column-3").text
+        cashSelling = row.find("td", class_="column-4").text
+        
+        print("{}:\tCB:{}\tCS:{}".format(code, cashBuying, cashSelling))
+
 
 def AWIN(URL):
     print(URL)
@@ -109,4 +148,4 @@ def AMHR(URL):
     print(URL)
 
 if __name__ == '__main__':
-    CBET('https://combanketh.et/cbeapi/daily-exchange-rates')
+    DEET('https://dbe.com.et/')

@@ -1,4 +1,4 @@
-![birrwatch logo](static\images\birrwatch1.png)
+![birrwatch logo](static/images/birrwatch1.png)
 ## BirrWatch
 BirrWatch is a web platform that consolidates foreign exchange rates from multiple Ethiopian banks, providing users with up-to-date and easily accessible currency information. The platform automatically scrapes exchange rate data from over 20 banks and displays the rates in a simple, user-friendly interface.
 ### Project Goal
@@ -37,6 +37,10 @@ Install the required dependencies:
 Set up the MySQL database:
 Create a new MySQL database.
 Configure your database connection settings in the .env file.
+
+Selenium installation(make sure to install have both webdriver and browser)
+a guide on how to setup selenium:
+https://www.geeksforgeeks.org/how-to-install-selenium-in-python/
 
 Run the application:
 `flask run`
