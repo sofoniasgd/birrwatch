@@ -135,44 +135,30 @@ def DASH(URL): # BeautifulSoup
                 tx_buying = tds[2].text
                 tx_selling = tds[2].text
                 print("{}:\ttxB:{}\ttxS:{}".format(code, tx_buying, tx_selling))
-        
-        #print("{}:\tCB:{}\tCS:{}".format(code, cashBuying, cashSelling))
-    # have to use selenium to select between transaction and cash rate tables
-    
-    # Path to ChromeDriver executable
-    #chrome_driver_path = "./chromedriver"
 
-    # Set up the Chrome WebDriver and get url
-    #service = Service(chrome_driver_path)
-    #driver = webdriver.Chrome(service=service)
-    #driver.get(URL)
-    # Wait for the dropdown to be present
-    #wait = WebDriverWait(driver, 5)
-    # find and select the second option
-    #li_element = driver.find_element(By.XPATH, "//*[@id='post-10808']/div[1]/div/div/div[2]/div/div[1]/div[2]/ul/li[2]")
-    #li_element.click()
-    #wait = WebDriverWait(driver, 2)
-    # find table rows
-    #rows = driver.find_element(BY.XPATH, "//*[@id='post-10808']/div[1]/div/div/div[2]/div/div[1]/div[2]/div/div[1]/div/table > tr")
-    #for row in rows:
-    #    print(row.text)
-    # Get the page source and parse it with BeautifulSoup
-    #page_html = driver.page_source
-    #soup = BeautifulSoup(page_html, 'html.parser')
+def ABYS(URL): # BeautifulSoup
+    # transaction and cash rates are in one paginated table
+    # so i can extract data without using selenium to make tables visible
+    try:
+        response = requests.get(URL)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print("Error fetching the webpage: {}".format(e))
     # parse data
-    #table = soup.find("table")
-    #rows = table.tbody.find_all("tr")
-    #for row in rows:
-        #print(row.text)
-        #tds = row.find_all("td")
-        #currency = tds[0].text
-        #code = currency[1:4]
-        #tx_buying = tds[2].text
-        #tx_selling = tds[3].text
-        #print("{}:\tCB:{}\tCS:{}".format(code, cashBuying, cashSelling))
-
-def ABYS(URL):
-    print(URL)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    table = soup.find("table", id="tablepress-15")
+    rows = table.tbody.find_all("tr")
+    # first section of table shows cash rates (rows 2-11)
+    # while second section(rows 14-31) show transactional rates
+    for index in range(2, 12):
+        tds = rows[index].find_all("td")
+        for td in tds:
+            print(td.text)
+    print("==============")
+    for index in range(14, 32):
+        tds = rows[index].find_all("td")
+        for td in tds:
+            print(td.text)
 
 def WEGA(URL):
     print(URL)
@@ -232,4 +218,5 @@ if __name__ == '__main__':
     # CBET('https://combanketh.et/cbeapi/daily-exchange-rates')
     # DEET('https://dbe.com.et/')
     # AWIN('https://awashbank.com/exchange-historical/')
-    DASH('https://dashenbanksc.com/daily-exchange-rates/')
+    # DASH('https://dashenbanksc.com/daily-exchange-rates/')
+    ABYS('https://www.bankofabyssinia.com/exchange-rate-2/')

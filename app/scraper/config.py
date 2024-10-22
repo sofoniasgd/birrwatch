@@ -8,7 +8,7 @@
 # DEET - Development Bank of Ethiopia   https://dbe.com.et/
 # AWIN - Awash Bank S.C.                https://awashbank.com/exchange-historical/
 # DASH - Dashen Bank S.C.               https://dashenbanksc.com/daily-exchange-rates/
-# ABYS - Bank of Abyssinia              https://bankofabyssinia.com/
+# ABYS - Bank of Abyssinia              https://www.bankofabyssinia.com/exchange-rate-2/
 # WEGA - Wegagen Bank S.C.              https://www.wegagen.com/
 # UNTD - Hibret Bank S.C.               https://www.hibretbank.com.et/
 # NIBI - Nib Int. Bank S.C.             https://www.nibbanksc.com/exchange-rate/
@@ -51,7 +51,7 @@ bank_url = {
         "URL" : "https://dashenbanksc.com/daily-exchange-rates/"
     },
     "ABYS" : {
-        "URL" : "https://bankofabyssinia.com/"
+        "URL" : "https://www.bankofabyssinia.com/exchange-rate-2/"
     },
     "WEGA" : {
         "URL" : "https://www.wegagen.com/"
