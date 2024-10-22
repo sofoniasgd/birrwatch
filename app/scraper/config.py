@@ -54,7 +54,7 @@ bank_url = {
         "URL" : "https://www.bankofabyssinia.com/exchange-rate-2/"
     },
     "WEGA" : {
-        "URL" : "https://www.wegagen.com/"
+        "URL" : "https://weg.back.strapi.wegagen.com/api/exchange-rates?populate=*"
     },
     "UNTD" : {
         "URL" : "https://www.hibretbank.com.et/"

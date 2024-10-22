@@ -160,11 +160,63 @@ def ABYS(URL): # BeautifulSoup
         for td in tds:
             print(td.text)
 
-def WEGA(URL):
-    print(URL)
+def WEGA(URL): # API CALL
+    # use Chrome-like headers
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36",
+        "origin": "https://www.wegagen.com/",
+        "accept": "application/json, text/plain, */*",
+        "accept-language": "en-GB,en-US;q=0.9,en;q=0.8,am;q=0.7",
+        "priority": "u=1, i",
+        "sec-ch-ua": "\"Google Chrome\";v=\"129\", \"Not=A?Brand\";v=\"8\", \"Chromium\";v=\"129\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\"",
+        "Sec-Fetch-Dest": "empty",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Site": "same-site",
+    }
+    # transaction and cash rates are in one table
+    try:
+        response = requests.get(URL, headers=headers)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print("Error fetching the webpage: {}".format(e))
+    # parse data
+    if 'json' in response.headers.get('Content-Type'):
+        data = response.json()["data"]
+    else:
+        print('Response content is not in JSON format.')
+    print(type(data))
+    for item in data:
+        code = item["attributes"]["code"]
+        cashBuying = item["attributes"]["buying"]
+        cashSelling = item["attributes"]["selling"]
+        tx_buying = item["attributes"]["tra_buying"]
+        tx_selling = item["attributes"]["tra_selling"]
+        # store values
+        print("{}:\tCB:{}\tCS:{}\ttxB:{}\ttxS:{}".format(code, cashBuying, cashSelling, tx_buying, tx_selling))
 
-def UNTD(URL):
-    print(URL)
+def UNTD(URL): # BeautifulSoup
+    try:
+        response = requests.get(URL, verify=False)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print("Error fetching the webpage: {}".format(e))
+    # parse data
+    soup = BeautifulSoup(response.content, 'html.parser')
+    table = soup.find("table", id="exchange-rate")
+    rows = table.find_all("tr")
+    # print(table.text)
+    for row in rows:
+        tds = row.find_all("td")
+        if len(tds) == 0:
+            continue
+        currency = tds[0].text
+        code = currency[3:6]
+        cashBuying = tds[1].text
+        cashSelling = tds[2].text
+        print("{}:\tCB:{}\tCS:{}\t".format(code, cashBuying, cashSelling))
+    # print(URL)
 
 def NIBI(URL):
     print(URL)
@@ -219,4 +271,6 @@ if __name__ == '__main__':
     # DEET('https://dbe.com.et/')
     # AWIN('https://awashbank.com/exchange-historical/')
     # DASH('https://dashenbanksc.com/daily-exchange-rates/')
-    ABYS('https://www.bankofabyssinia.com/exchange-rate-2/')
+    # ABYS('https://www.bankofabyssinia.com/exchange-rate-2/')
+    # WEGA('https://weg.back.strapi.wegagen.com/api/exchange-rates?populate=*')
+    UNTD('https://www.hibretbank.com.et/')
