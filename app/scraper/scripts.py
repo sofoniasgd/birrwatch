@@ -48,7 +48,7 @@ def CBET(URL): # API call
         # store values
         print("{}:\tCB:{}\tCS:{}\ttxB:{}\ttxS:{}".format(code, cashBuying, cashSelling, tx_buying, tx_selling))
 
-def DEET(URL):
+def DEET(URL): # selenium
     # since the table has a selector for how many rows to show
     # i have to use selenium here to interact with the table
     # to show the maximum number of results
@@ -84,7 +84,7 @@ def DEET(URL):
         print("{}:\tCB:{}\tCS:{}".format(code, cashBuying, cashSelling))
 
 
-def AWIN(URL):
+def AWIN(URL): # BeautifulSoup
     try:
         response = requests.get(URL)
         response.raise_for_status()
@@ -105,22 +105,71 @@ def AWIN(URL):
         tx_selling = tds[4].text
         print("{}:\tCB:{}\tCS:{}\ttxB:{}\ttxS:{}".format(code, cashBuying, cashSelling, tx_buying, tx_selling))
 
-def DASH(URL):
+def DASH(URL): # BeautifulSoup
+    # transaction and cash rates are in two tables and made visible by css
+    # so i can extract data without using selenium to make tables visible
+    try:
+        response = requests.get(URL)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print("Error fetching the webpage: {}".format(e))
+    # parse data
+    soup = BeautifulSoup(response.content, 'html.parser')
+    tables = soup.find_all("table")
+    # get data for each table
+    for table in tables:
+        first_row = table.tbody.find_all("tr")[0]
+        rate_type = first_row.find_all("td")[2]
+        rows = table.tbody.find_all("tr")
+        # print(rate_type.text)
+        for row in rows:
+            tds = row.find_all("td")
+            currency = tds[0].text
+            code = currency[1:4]
+            # depending on the rate_type store in corresponding variable
+            if rate_type.text == "Cash Buying":
+                cashBuying = tds[2].text
+                cashSelling = tds[3].text
+                print("{}:\tCB:{}\tCS:{}\t".format(code, cashBuying, cashSelling))
+            else:
+                tx_buying = tds[2].text
+                tx_selling = tds[2].text
+                print("{}:\ttxB:{}\ttxS:{}".format(code, tx_buying, tx_selling))
+        
+        #print("{}:\tCB:{}\tCS:{}".format(code, cashBuying, cashSelling))
     # have to use selenium to select between transaction and cash rate tables
     
     # Path to ChromeDriver executable
-    chrome_driver_path = "./chromedriver"
+    #chrome_driver_path = "./chromedriver"
 
     # Set up the Chrome WebDriver and get url
-    service = Service(chrome_driver_path)
-    driver = webdriver.Chrome(service=service)
-    driver.get(URL)
+    #service = Service(chrome_driver_path)
+    #driver = webdriver.Chrome(service=service)
+    #driver.get(URL)
     # Wait for the dropdown to be present
-    wait = WebDriverWait(driver, 5)
-    dropdown_element = wait.until(EC.presence_of_element_located((By.CLASSNAME, "et_pb_tab_content")))
-    
-
-    print(URL)
+    #wait = WebDriverWait(driver, 5)
+    # find and select the second option
+    #li_element = driver.find_element(By.XPATH, "//*[@id='post-10808']/div[1]/div/div/div[2]/div/div[1]/div[2]/ul/li[2]")
+    #li_element.click()
+    #wait = WebDriverWait(driver, 2)
+    # find table rows
+    #rows = driver.find_element(BY.XPATH, "//*[@id='post-10808']/div[1]/div/div/div[2]/div/div[1]/div[2]/div/div[1]/div/table > tr")
+    #for row in rows:
+    #    print(row.text)
+    # Get the page source and parse it with BeautifulSoup
+    #page_html = driver.page_source
+    #soup = BeautifulSoup(page_html, 'html.parser')
+    # parse data
+    #table = soup.find("table")
+    #rows = table.tbody.find_all("tr")
+    #for row in rows:
+        #print(row.text)
+        #tds = row.find_all("td")
+        #currency = tds[0].text
+        #code = currency[1:4]
+        #tx_buying = tds[2].text
+        #tx_selling = tds[3].text
+        #print("{}:\tCB:{}\tCS:{}".format(code, cashBuying, cashSelling))
 
 def ABYS(URL):
     print(URL)
