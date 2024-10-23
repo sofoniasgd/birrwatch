@@ -523,8 +523,27 @@ def ENAT(URL): # BeautifulSoup
         print("{}:\tCB:{}\tCS:{}\ttxB:{}\ttxS:{}".format(code, cashBuying, cashSelling, tx_buying, tx_selling))
 
 
-def DEGA(URL):
-    print(URL)
+def DEGA(URL): # BeautifulSoup
+    try:
+        response = requests.get(URL)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print("Error fetching the webpage: {}".format(e))
+        return
+    # parse data
+    soup = BeautifulSoup(response.content, 'html.parser')
+    # find the table using its cointaining div since it has an id
+    table = soup.find("table", class_="wptb-preview-table")
+    rows = table.tbody.find_all("tr")
+    for row in rows:
+        tds = row.find_all("td")
+        if rows.index(row) == 0:
+            continue
+        currency = tds[0].text.strip()
+        code = currency[0:3]
+        cashBuying = tds[1].text.strip()
+        cashSelling = tds[2].text.strip()
+        print("{}:\tCB:{}\tCS:{}\t".format(code, cashBuying, cashSelling))
 
 def ZEMZ(URL):
     print(URL)
@@ -558,4 +577,5 @@ if __name__ == '__main__':
     # BERH('https://berhanbanksc.com/')
     # ABAY('https://abaybank.com.et/exchange-rates/')
     # ABSC('https://addisbanksc.com/')
-    ENAT('https://www.enatbanksc.com/')
+    # ENAT('https://www.enatbanksc.com/')
+    DEGA('https://www.globalbankethiopia.com/')
