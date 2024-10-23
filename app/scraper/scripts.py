@@ -463,7 +463,7 @@ def ABAY(URL): # BeautifulSoup
             print(td.text)
 
 def ABSC(URL):# selenium
-    # website has anti-bot features so i have to use elenium
+    # website has anti-bot features so i have to use selenium
 
     # Path to ChromeDriver executable
     chrome_driver_path = "/usr/bin/chromedriver"
@@ -472,21 +472,29 @@ def ABSC(URL):# selenium
     service = Service(chrome_driver_path)
     driver = webdriver.Chrome(service=service)
     driver.get(URL)
-    # Wait for the page to load
+    # Wait for the page to load the table
     wait = WebDriverWait(driver, 5)
-    dropdown_element = wait.until(EC.presence_of_element_located((By.NAME, "tablepress-1_length")))
-    
-    select = Select(dropdown_element)
-    # Select an option by value
-    select.select_by_value("50")
-    dropdown_element = wait.until(EC.presence_of_element_located((By.ID, "tablepress-1")))
+    table = wait.until(EC.presence_of_element_located((By.ID, "tablepress-13")))
+
     # Get the page source and parse it with BeautifulSoup
     page_html = driver.page_source
     soup = BeautifulSoup(page_html, 'html.parser')
     # get table
-    table = soup.find("table", id="tablepress-1")
+    table = soup.find("table", id="tablepress-13")
     # print(table)
     rows = table.tbody.find_all("tr")
+    for row in rows:
+        tds = row.find_all("td")
+        # skip first and empty rows
+        if len(tds) == 0 or rows.index(row) == 0:
+            continue
+        currency = tds[0].text
+        code = currency[0:3]
+        tx_buying = tds[1].text
+        tx_selling = tds[2].text
+        cashBuying = tds[4].text
+        cashSelling = tds[5].text
+        print("{}:\tCB:{}\tCS:{}\ttxB:{}\ttxS:{}".format(code, cashBuying, cashSelling, tx_buying, tx_selling))
 
 def ENAT(URL):
     print(URL)
