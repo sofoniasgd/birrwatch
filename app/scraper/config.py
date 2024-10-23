@@ -72,16 +72,16 @@ bank_url = {
         "URL" : "https://www.oromiabank.com/"
     },
     "ZEME" : {
-        "URL" : "https://www.zemenbank.com/"
+        "URL" : "https://www.zemenbank.com/exchange-rates"
     },
     "BUNA" : {
-        "URL" : "https://bunnabanksc.com/"
+        "URL" : "https://bunnabanksc.com/foreign-exchange/"
     },
     "BERH" : {
         "URL" : "https://berhanbanksc.com/"
     },
     "ABAY" : {
-        "URL" : "https://abaybank.com.et/"
+        "URL" : "https://abaybank.com.et/exchange-rates/"
     },
     "ABSC" : {
         "URL" : "https://addisbanksc.com/"

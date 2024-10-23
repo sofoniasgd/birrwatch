@@ -34,6 +34,7 @@ def CBET(URL): # API call
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
         print("Error fetching the webpage: {}".format(e))
+        return
     # parse data
     data = response.json()
     rates = data[0]["ExchangeRate"]
@@ -83,13 +84,13 @@ def DEET(URL): # selenium
         
         print("{}:\tCB:{}\tCS:{}".format(code, cashBuying, cashSelling))
 
-
 def AWIN(URL): # BeautifulSoup
     try:
         response = requests.get(URL)
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
         print("Error fetching the webpage: {}".format(e))
+        return
     # parse data
     soup = BeautifulSoup(response.content, 'html.parser')
     table = soup.find("table", id="exchange-rates-table")
@@ -113,6 +114,7 @@ def DASH(URL): # BeautifulSoup
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
         print("Error fetching the webpage: {}".format(e))
+        return
     # parse data
     soup = BeautifulSoup(response.content, 'html.parser')
     tables = soup.find_all("table")
@@ -144,6 +146,7 @@ def ABYS(URL): # BeautifulSoup
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
         print("Error fetching the webpage: {}".format(e))
+        return
     # parse data
     soup = BeautifulSoup(response.content, 'html.parser')
     table = soup.find("table", id="tablepress-15")
@@ -181,6 +184,7 @@ def WEGA(URL): # API CALL
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
         print("Error fetching the webpage: {}".format(e))
+        return
     # parse data
     if 'json' in response.headers.get('Content-Type'):
         data = response.json()["data"]
@@ -202,6 +206,7 @@ def UNTD(URL): # BeautifulSoup
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
         print("Error fetching the webpage: {}".format(e))
+        return
     # parse data
     soup = BeautifulSoup(response.content, 'html.parser')
     table = soup.find("table", id="exchange-rate")
@@ -225,6 +230,7 @@ def NIBI(URL): # BeautifulSoup
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
         print("Error fetching the webpage: {}".format(e))
+        return
     # parse data
     soup = BeautifulSoup(response.content, 'html.parser')
     table = soup.find("table", class_="ea-advanced-data-table-6b449cce")
@@ -355,20 +361,132 @@ def ORIR(URL): # BeautifulSoup
         #tx_selling = tds[4].text
         print("{}:\tCB:{}\tCS:{}\t".format(code, cashBuying, cashSelling,))
 
-def ZEME(URL):
-    print(URL)
+def ZEME(URL): # BeautifulSoup
+    try:
+        response = requests.get(URL)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print("Error fetching the webpage: {}".format(e))
+        return
+    # parse data
+    soup = BeautifulSoup(response.content, 'html.parser')
+    table = soup.find("table", class_="table currency-exchange-table")
+    rows = table.tbody.find_all("tr")
+    # print(table.text)
+    for row in rows:
+        tds = row.find_all("td")
+        # skip empty rows
+        if len(tds) == 0:
+            continue
+        # print(row.text)
+        currency = tds[0].text.strip()
+        code = currency[0:3]
+        cashBuying = tds[1].text.strip()
+        cashSelling = tds[2].text.strip()
+        print("{}:\tCB:{}\tCS:{}\t".format(code, cashBuying, cashSelling,))
 
-def BUNA(URL):
-    print(URL)
+def BUNA(URL): # BeautifulSoup
+    try:
+        response = requests.get(URL)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print("Error fetching the webpage: {}".format(e))
+        return
+    # parse data
+    soup = BeautifulSoup(response.content, 'html.parser')
+    table = soup.find("table", class_="currency-table")
+    rows = table.tbody.find_all("tr")
+    # print(table.text)
+    for row in rows:
+        tds = row.find_all("td")
+        # skip empty rows
+        if len(tds) == 0:
+            continue
+        currency = tds[0].text
+        code = currency[0:3]
+        cashBuying = tds[2].text
+        cashSelling = tds[3].text
+        tx_buying = tds[4].text
+        tx_selling = tds[5].text
+        print("{}:\tCB:{}\tCS:{}\ttxB:{}\ttxS:{}".format(code, cashBuying, cashSelling, tx_buying, tx_selling))
 
-def BERH(URL):
-    print(URL)
 
-def ABAY(URL):
-    print(URL)
+def BERH(URL): # BeautifulSoup
+    try:
+        response = requests.get(URL)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print("Error fetching the webpage: {}".format(e))
+        return
+    # parse data
+    soup = BeautifulSoup(response.content, 'html.parser')
+    # data is in divs and not in a table this time
+    data_div = soup.find("div", class_="elementor-element-28165e1")
+    rows = data_div.find_all("div", class_="row")
+    for row in rows:
+        if rows.index(row) == 0 or rows.index(row) > 6:
+            continue
+        # get column divs(cols)
+        cols = row.find_all("div")
+        currency = cols[0].text.strip()
+        code = currency[2:5]
+        cashBuying = cols[1].text.strip()
+        cashSelling = cols[2].text.strip()
+        print("{}:\tCB:{}\tCS:{}\t".format(code, cashBuying, cashSelling))
 
-def ABSC(URL):
-    print(URL)
+def ABAY(URL): # BeautifulSoup
+    # transaction and cash rates are in one paginated table
+    # so i can extract data without using selenium to make tables visible
+    try:
+        response = requests.get(URL)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print("Error fetching the webpage: {}".format(e))
+    # parse data
+    soup = BeautifulSoup(response.content, 'html.parser')
+    table = soup.find("table", id="tablepress-25")
+    rows = table.tbody.find_all("tr")
+    # for row in rows:
+    #    print(rows.index(row), row.text.strip())
+    # first section of table shows cash rates (rows 1-4)
+    # while second section(rows 7-13, 17, 20-21) show transactional rates
+    for index in range(1, 5):
+        tds = rows[index].find_all("td")
+        for td in tds:
+            print(td.text)
+    print("==============")
+    # create a row list since some rows dont have data
+    row_list = [*range(7,14), 17, 20, 21]
+    for index in row_list:
+        tds = rows[index].find_all("td")
+        for td in tds:
+            print(td.text)
+
+def ABSC(URL):# selenium
+    # website has anti-bot features so i have to use elenium
+
+    # Path to ChromeDriver executable
+    chrome_driver_path = "/usr/bin/chromedriver"
+
+    # Set up the Chrome WebDriver and get url
+    service = Service(chrome_driver_path)
+    driver = webdriver.Chrome(service=service)
+    driver.get(URL)
+    # Wait for the page to load
+    wait = WebDriverWait(driver, 5)
+    dropdown_element = wait.until(EC.presence_of_element_located((By.NAME, "tablepress-1_length")))
+    
+    select = Select(dropdown_element)
+    # Select an option by value
+    select.select_by_value("50")
+    dropdown_element = wait.until(EC.presence_of_element_located((By.ID, "tablepress-1")))
+    # Get the page source and parse it with BeautifulSoup
+    page_html = driver.page_source
+    soup = BeautifulSoup(page_html, 'html.parser')
+    # get table
+    table = soup.find("table", id="tablepress-1")
+    # print(table)
+    rows = table.tbody.find_all("tr")
 
 def ENAT(URL):
     print(URL)
@@ -402,4 +520,9 @@ if __name__ == '__main__':
     # NIBI('https://www.nibbanksc.com/exchange-rate/')
     # CBOR('https://coopbankoromia.com.et/daily-exchange-rates/')
     # LIBS('https://anbesabank.com/')
-    ORIR('https://www.oromiabank.com/')
+    # ORIR('https://www.oromiabank.com/')
+    # ZEME('https://www.zemenbank.com/exchange-rates')
+    # BUNA('https://bunnabanksc.com/foreign-exchange/')
+    # BERH('https://berhanbanksc.com/')
+    # ABAY('https://abaybank.com.et/exchange-rates/')
+    ABSC('https://addisbanksc.com/')
