@@ -464,7 +464,6 @@ def ABAY(URL): # BeautifulSoup
 
 def ABSC(URL):# selenium
     # website has anti-bot features so i have to use selenium
-
     # Path to ChromeDriver executable
     chrome_driver_path = "/usr/bin/chromedriver"
 
@@ -496,8 +495,33 @@ def ABSC(URL):# selenium
         cashSelling = tds[5].text
         print("{}:\tCB:{}\tCS:{}\ttxB:{}\ttxS:{}".format(code, cashBuying, cashSelling, tx_buying, tx_selling))
 
-def ENAT(URL):
-    print(URL)
+def ENAT(URL): # BeautifulSoup
+    # transaction and cash rates are in one paginated table
+    # so i can extract data without using selenium to make tables visible
+    # using row numbers
+    try:
+        response = requests.get(URL)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print("Error fetching the webpage: {}".format(e))
+    # parse data
+    soup = BeautifulSoup(response.content, 'html.parser')
+    table = soup.find("table", id="tablepress-1")
+    rows = table.tbody.find_all("tr")
+    # table has four columns(1-5) i'm extracting data out of
+    # and some rows have empty rates
+    # set active rows
+    row_list = [*range(1,4), 12, 16, 17]
+    for index in row_list:
+        tds = rows[index].find_all("td")
+        currency = tds[1].text
+        code = currency[0:3]
+        cashBuying = tds[2].text
+        cashSelling = tds[3].text
+        tx_buying = tds[4].text
+        tx_selling = tds[5].text
+        print("{}:\tCB:{}\tCS:{}\ttxB:{}\ttxS:{}".format(code, cashBuying, cashSelling, tx_buying, tx_selling))
+
 
 def DEGA(URL):
     print(URL)
@@ -533,4 +557,5 @@ if __name__ == '__main__':
     # BUNA('https://bunnabanksc.com/foreign-exchange/')
     # BERH('https://berhanbanksc.com/')
     # ABAY('https://abaybank.com.et/exchange-rates/')
-    ABSC('https://addisbanksc.com/')
+    # ABSC('https://addisbanksc.com/')
+    ENAT('https://www.enatbanksc.com/')
