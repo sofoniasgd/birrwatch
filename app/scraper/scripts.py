@@ -593,8 +593,28 @@ def GOBT(URL): # BeautifulSoup
         cashSelling = tds[3].text.strip()
         print("{}:\tCB:{}\tCS:{}\t".format(code, cashBuying, cashSelling))
 
-def HIJR(URL):
-    print(URL)
+def HIJR(URL): # BeautifulSoup
+    try:
+        response = requests.get(URL)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print("Error fetching the webpage: {}".format(e))
+        return
+    # parse data
+    soup = BeautifulSoup(response.content, 'html.parser')
+    # find the table using its cointaining div since it has a unique class name
+    table = soup.find("table")
+    rows = table.tbody.find_all("tr")
+    for row in rows:
+        # !!need to add currency codes here!!
+        tds = row.find_all("td")
+        currency = tds[0].text
+        code = currency[0:3]
+        cashBuying = tds[1].text
+        cashSelling = tds[2].text
+        tx_buying = tds[3].text
+        tx_selling = tds[4].text
+        print("{}:\tCB:{}\tCS:{}\ttxB:{}\ttxS:{}".format(code, cashBuying, cashSelling, tx_buying, tx_selling))
 
 def TSCP(URL):
     print(URL)
@@ -622,4 +642,5 @@ if __name__ == '__main__':
     # ENAT('https://www.enatbanksc.com/')
     # DEGA('https://www.globalbankethiopia.com/')
     # ZEMZ('https://zamzambank.com/exchange-rates/todays-exchange-rate/')
-    GOBT('https://www.gohbetbank.com/todays-exchange-rate/')
+    # GOBT('https://www.gohbetbank.com/todays-exchange-rate/')
+    HIJR('https://hijra-bank.com/')
