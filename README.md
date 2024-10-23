@@ -38,9 +38,10 @@ Set up the MySQL database:
 Create a new MySQL database.
 Configure your database connection settings in the .env file.
 
-Selenium installation(make sure to install have both webdriver and browser)
-a guide on how to setup selenium:
-https://www.geeksforgeeks.org/how-to-install-selenium-in-python/
+Selenium Setup (***make sure to install have both webdriver and browser***)
+- a webdriver is included with the setup- `/chromedriver-linux64.zip`
+- extract the archive and place the executable `chromedriver` in `/usr/bin/`
+- a guide on how to setup selenium: https://www.geeksforgeeks.org/how-to-install-selenium-in-python/
 
 Run the application:
 `flask run`

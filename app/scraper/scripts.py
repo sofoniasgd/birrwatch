@@ -545,8 +545,33 @@ def DEGA(URL): # BeautifulSoup
         cashSelling = tds[2].text.strip()
         print("{}:\tCB:{}\tCS:{}\t".format(code, cashBuying, cashSelling))
 
-def ZEMZ(URL):
-    print(URL)
+def ZEMZ(URL): # BeautifulSoup
+    try:
+        response = requests.get(URL)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print("Error fetching the webpage: {}".format(e))
+        return
+    # parse data
+    soup = BeautifulSoup(response.content, 'html.parser')
+    # data is in divs and not in a table this time
+    data_div = soup.find("div", class_="elementor-element-2cbffac")
+    # setting attribute to get the direct decsendant divs(rows) only
+    rows = data_div.find_all("div", recursive=False)
+    print(type(rows))
+    for row in rows:
+        # skip title row
+        if rows.index(row) == 0:
+            continue
+        # rows is an iterator
+        cols = row.find_all("div", recursive=False)
+        currency = cols[0].text.strip()
+        code = currency[0:3]
+        cashBuying = cols[1].text.strip()
+        cashSelling = cols[2].text.strip()
+        tx_buying = cols[3].text.strip()
+        tx_selling = cols[4].text.strip()
+        print("{}:\tCB:{}\tCS:{}\ttxB:{}\ttxS:{}".format(code, cashBuying, cashSelling, tx_buying, tx_selling))
 
 def GOBT(URL):
     print(URL)
@@ -578,4 +603,5 @@ if __name__ == '__main__':
     # ABAY('https://abaybank.com.et/exchange-rates/')
     # ABSC('https://addisbanksc.com/')
     # ENAT('https://www.enatbanksc.com/')
-    DEGA('https://www.globalbankethiopia.com/')
+    # DEGA('https://www.globalbankethiopia.com/')
+    ZEMZ('https://zamzambank.com/exchange-rates/todays-exchange-rate/')
