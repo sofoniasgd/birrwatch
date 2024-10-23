@@ -209,6 +209,7 @@ def UNTD(URL): # BeautifulSoup
     # print(table.text)
     for row in rows:
         tds = row.find_all("td")
+         # skip empty rows
         if len(tds) == 0:
             continue
         currency = tds[0].text
@@ -218,17 +219,141 @@ def UNTD(URL): # BeautifulSoup
         print("{}:\tCB:{}\tCS:{}\t".format(code, cashBuying, cashSelling))
     # print(URL)
 
-def NIBI(URL):
-    print(URL)
+def NIBI(URL): # BeautifulSoup
+    try:
+        response = requests.get(URL)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print("Error fetching the webpage: {}".format(e))
+    # parse data
+    soup = BeautifulSoup(response.content, 'html.parser')
+    table = soup.find("table", class_="ea-advanced-data-table-6b449cce")
+    rows = table.tbody.find_all("tr")
+    # print(table.text)
+    for row in rows:
+        tds = row.find_all("td")
+         # skip empty rows
+        if len(tds) == 0:
+            continue
+        currency = tds[1].text
+        code = currency[0:3]
+        cashBuying = tds[2].text
+        cashSelling = tds[3].text
+        tx_buying = tds[4].text
+        tx_selling = tds[5].text
+        print("{}:\tCB:{}\tCS:{}\ttxB:{}\ttxS:{}".format(code, cashBuying, cashSelling, tx_buying, tx_selling))
 
-def CBOR(URL):
-    print(URL)
+    # print(URL)
 
-def LIBS(URL):
-    print(URL)
+def CBOR(URL): # BeautifulSoup
+    # this site requires user-agent headers
+    headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36",
+    "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+    "accept-language": "en-GB,en-US;q=0.9,en;q=0.8,am;q=0.7",
+    "priority": "u=0, i",
+    "sec-ch-ua": "\"Google Chrome\";v=\"129\", \"Not=A?Brand\";v=\"8\", \"Chromium\";v=\"129\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "document",
+    "sec-fetch-mode": "navigate",
+    "sec-fetch-site": "none",
+    "sec-fetch-user": "?1",
+    "upgrade-insecure-requests": "1"
+    }
+    try:
+        response = requests.get(URL, headers=headers)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print("Error fetching the webpage: {}".format(e))
+        return
+    # parse data
+    soup = BeautifulSoup(response.content, 'html.parser')
+    table = soup.find("table", id="exchange-rates-table")
+    rows = table.tbody.find_all("tr")
+    # print(table.text)
+    for row in rows:
+        tds = row.find_all("td")
+        # skip empty rows
+        if len(tds) == 0:
+            continue
+        currency = tds[0].text
+        code = currency[1:4]
+        cashBuying = tds[1].text
+        cashSelling = tds[2].text
+        tx_buying = tds[3].text
+        tx_selling = tds[4].text
+        print("{}:\tCB:{}\tCS:{}\ttxB:{}\ttxS:{}".format(code, cashBuying, cashSelling, tx_buying, tx_selling))
+    #print(URL)
 
-def ORIR(URL):
-    print(URL)
+def LIBS(URL): # BeautifulSoup
+    # this site requires user-agent headers
+    headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36",
+    "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+    "accept-language": "en-GB,en-US;q=0.9,en;q=0.8,am;q=0.7",
+    "priority": "u=0, i",
+    "sec-ch-ua": "\"Google Chrome\";v=\"129\", \"Not=A?Brand\";v=\"8\", \"Chromium\";v=\"129\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "document",
+    "sec-fetch-mode": "navigate",
+    "sec-fetch-site": "none",
+    "sec-fetch-user": "?1",
+    "upgrade-insecure-requests": "1"
+    }
+    try:
+        response = requests.get(URL, headers=headers)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print("Error fetching the webpage: {}".format(e))
+        return
+    # parse data
+    soup = BeautifulSoup(response.content, 'html.parser')
+    table = soup.find("table")
+    rows = table.tbody.find_all("tr")
+    # print(table.text)
+    # set currency codes
+    codes = ["USD", "GBP", "EUR"]
+    for row in rows:
+        tds = row.find_all("td")
+         # skip empty and first two rows
+        if len(tds) == 0 or rows.index(row) <= 1:
+            continue
+        code = codes[rows.index(row) - 2]
+        # print(row.text)
+        cashBuying = tds[1].text
+        cashSelling = tds[2].text
+        print("{}:\tCB:{}\tCS:{}".format(code, cashBuying, cashSelling))
+
+def ORIR(URL): # BeautifulSoup
+    try:
+        response = requests.get(URL)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print("Error fetching the webpage: {}".format(e))
+        return
+    # parse data
+    soup = BeautifulSoup(response.content, 'html.parser')
+    table = soup.find("table")
+    rows = table.tbody.find_all("tr")
+    # print(table.text)
+    for row in rows:
+        tds = row.find_all("td")
+        # skip empty and first rows
+        if len(tds) == 0 or rows.index(row) == 0:
+            continue
+        # print(row.text)
+        currency = tds[0].text
+        code = currency[0:4]
+        # JPY label has an extra space infront, remove it
+        if code == " JPY":
+            code = code[1:]
+        cashBuying = tds[1].text
+        cashSelling = tds[2].text
+        #tx_buying = tds[3].text
+        #tx_selling = tds[4].text
+        print("{}:\tCB:{}\tCS:{}\t".format(code, cashBuying, cashSelling,))
 
 def ZEME(URL):
     print(URL)
@@ -273,4 +398,8 @@ if __name__ == '__main__':
     # DASH('https://dashenbanksc.com/daily-exchange-rates/')
     # ABYS('https://www.bankofabyssinia.com/exchange-rate-2/')
     # WEGA('https://weg.back.strapi.wegagen.com/api/exchange-rates?populate=*')
-    UNTD('https://www.hibretbank.com.et/')
+    # UNTD('https://www.hibretbank.com.et/')
+    # NIBI('https://www.nibbanksc.com/exchange-rate/')
+    # CBOR('https://coopbankoromia.com.et/daily-exchange-rates/')
+    # LIBS('https://anbesabank.com/')
+    ORIR('https://www.oromiabank.com/')
