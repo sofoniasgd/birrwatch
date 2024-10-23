@@ -642,10 +642,16 @@ def TSCP(URL): # BeautifulSoup
         tx_selling = tds[4].text
         print("{}:\tCB:{}\tCS:{}\ttxB:{}\ttxS:{}".format(code, cashBuying, cashSelling, tx_buying, tx_selling))
 
-def AMHR(URL):
+def AMHR(URL): # BeautifulSoup
+    try:
+        response = requests.get(URL)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print("Error fetching the webpage: {}".format(e))
+        return
     print(URL)
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
     # CBET('https://combanketh.et/cbeapi/daily-exchange-rates')
     # DEET('https://dbe.com.et/')
     # AWIN('https://awashbank.com/exchange-historical/')
@@ -667,4 +673,5 @@ if __name__ == '__main__':
     # ZEMZ('https://zamzambank.com/exchange-rates/todays-exchange-rate/')
     # GOBT('https://www.gohbetbank.com/todays-exchange-rate/')
     # HIJR('https://hijra-bank.com/')
-    TSCP('https://tsehaybank.com.et/exchange-rate/')
+    # TSCP('https://tsehaybank.com.et/exchange-rate/')
+    # AMHR('https://www.amharabank.com.et/exchange-rate/')
