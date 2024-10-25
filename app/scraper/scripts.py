@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """Scraping scripts for each bank"""
 
 from bs4 import BeautifulSoup
@@ -32,137 +32,250 @@ def CBET(URL): # API call
         url = "{}{}".format(URL, endpoint)
         response = requests.get(url, headers=headers)
         response.raise_for_status()
+        # parse data
+        data = response.json()
+        rates = data[0]["ExchangeRate"]
+        # initialize exchange-rates list
+        exchange_rates = []
+        print(type(rates))
+        for item in rates:
+            # get rates and currency code
+            code = item["currency"]["CurrencyCode"]
+            cashBuying = item["cashBuying"]
+            cashSelling = item["cashSelling"]
+            tx_buying = item["transactionalBuying"]
+            tx_selling = item["transactionalSelling"]
+            # store values
+            data = {
+            "bank_id": "CBET",
+            "currency": code,
+            "cash_buying":  cashBuying,
+            "cash_selling": cashSelling,
+            "transactional_buying": tx_buying,
+            "transactional_selling": tx_selling
+            }
+            # append record to list
+            exchange_rates.append(data)
+            print("{}:\tCB:{}\tCS:{}\ttxB:{}\ttxS:{}".format(code, cashBuying, cashSelling, tx_buying, tx_selling))
+        # return rates-list
+        return {"status": "success", "bank_id": "CBET", "data": exchange_rates}
     except requests.exceptions.RequestException as e:
-        print("Error fetching the webpage: {}".format(e))
-        return
-    # parse data
-    data = response.json()
-    rates = data[0]["ExchangeRate"]
-    print(type(rates))
-    for item in rates:
-        # get rates and currency code
-        code = item["currency"]["CurrencyCode"]
-        cashBuying = item["cashBuying"]
-        cashSelling = item["cashSelling"]
-        tx_buying = item["transactionalBuying"]
-        tx_selling = item["transactionalSelling"]
-        # store values
-        print("{}:\tCB:{}\tCS:{}\ttxB:{}\ttxS:{}".format(code, cashBuying, cashSelling, tx_buying, tx_selling))
+        # Handle network and request-related errors specifically
+        return {"status": "failure", "bank_id": "CBET", "error": f"Request failed for CBET: {e}"}
+    except AttributeError:
+        # Handle parsing errors specifically
+        return {"status": "failure", "bank_id": "CBET", "error": f"Data extraction failed for CBET"}
+        # all, other errors
+    except Exception as e:
+        return {"status": "failure", "bank_id": "CBET", "error": f"An unexpected error occurred for CBET: {e}"}
 
 def DEET(URL): # selenium
     # since the table has a selector for how many rows to show
     # i have to use selenium here to interact with the table
     # to show the maximum number of results
+    try:
+        # Path to ChromeDriver executable
+        chrome_driver_path = "/usr/bin/chromedriver"
 
-    # Path to ChromeDriver executable
-    chrome_driver_path = "/usr/bin/chromedriver"
-
-    # Set up the Chrome WebDriver and get url
-    service = Service(chrome_driver_path)
-    driver = webdriver.Chrome(service=service)
-    driver.get(URL)
-    # Wait for the dropdown to be present
-    wait = WebDriverWait(driver, 5)
-    dropdown_element = wait.until(EC.presence_of_element_located((By.NAME, "tablepress-1_length")))
-    
-    select = Select(dropdown_element)
-    # Select an option by value
-    select.select_by_value("50")
-    dropdown_element = wait.until(EC.presence_of_element_located((By.ID, "tablepress-1")))
-    # Get the page source and parse it with BeautifulSoup
-    page_html = driver.page_source
-    soup = BeautifulSoup(page_html, 'html.parser')
-    # get table
-    table = soup.find("table", id="tablepress-1")
-    # print(table)
-    rows = table.tbody.find_all("tr")
-
-    for row in rows:
-        code = row.find("td", class_="column-2").text
-        cashBuying = row.find("td", class_="column-3").text
-        cashSelling = row.find("td", class_="column-4").text
+        # Set up the Chrome WebDriver and get url
+        service = Service(chrome_driver_path)
+        driver = webdriver.Chrome(service=service)
+        driver.get(URL)
+        # Wait for the dropdown to be present
+        wait = WebDriverWait(driver, 5)
+        dropdown_element = wait.until(EC.presence_of_element_located((By.NAME, "tablepress-1_length")))
         
-        print("{}:\tCB:{}\tCS:{}".format(code, cashBuying, cashSelling))
+        select = Select(dropdown_element)
+        # Select an option by value
+        select.select_by_value("50")
+        dropdown_element = wait.until(EC.presence_of_element_located((By.ID, "tablepress-1")))
+        # Get the page source and parse it with BeautifulSoup
+        page_html = driver.page_source
+        soup = BeautifulSoup(page_html, 'html.parser')
+        # get table
+        table = soup.find("table", id="tablepress-1")
+        # print(table)
+        rows = table.tbody.find_all("tr")
+        # initialize exchange-rates list
+        exchange_rates = []
+        for row in rows:
+            code = row.find("td", class_="column-2").text
+            cashBuying = row.find("td", class_="column-3").text
+            cashSelling = row.find("td", class_="column-4").text
+            # store values
+            data = {
+            "bank_id": "DEET",
+            "currency": code,
+            "cash_buying":  cashBuying,
+            "cash_selling": cashSelling,
+            "transactional_buying": "0",
+            "transactional_selling": "0"
+            }
+            # append record to list
+            exchange_rates.append(data)
+            print("{}:\tCB:{}\tCS:{}".format(code, cashBuying, cashSelling))
+        # return rates-list
+        return {"status": "success", "bank_id": "DEET", "data": exchange_rates}
+    except requests.exceptions.RequestException as e:
+        # Handle network and request-related errors specifically
+        return {"status": "failure", "bank_id": "DEET", "error": f"Request failed for CBET: {e}"}
+    except AttributeError:
+        # Handle parsing errors specifically
+        return {"status": "failure", "bank_id": "DEET", "error": f"Data extraction failed for CBET"}
+        # all, other errors
+    except Exception as e:
+        return {"status": "failure", "bank_id": "DEET", "error": f"An unexpected error occurred for CBET: {e}"}
 
 def AWIN(URL): # BeautifulSoup
     try:
         response = requests.get(URL)
         response.raise_for_status()
+        # parse data
+        soup = BeautifulSoup(response.content, 'html.parser')
+        table = soup.find("table", id="exchange-rates-table")
+        rows = table.tbody.find_all("tr")
+        # initialize exchange-rates list
+        exchange_rates = []
+        for row in rows:
+            tds = row.find_all("td")
+            currency = tds[0].text
+            code = currency[1:4]
+            cashBuying = tds[1].text
+            cashSelling = tds[2].text
+            tx_buying = tds[3].text
+            tx_selling = tds[4].text
+            # store values
+            data = {
+            "bank_id": "AWIN",
+            "currency": code,
+            "cash_buying":  cashBuying,
+            "cash_selling": cashSelling,
+            "transactional_buying": tx_buying,
+            "transactional_selling": tx_selling
+            }
+            # append record to list
+            exchange_rates.append(data)
+            print("{}:\tCB:{}\tCS:{}\ttxB:{}\ttxS:{}".format(code, cashBuying, cashSelling, tx_buying, tx_selling))
+        # return rates-list
+        return {"status": "success", "bank_id": "AWIN", "data": exchange_rates}
     except requests.exceptions.RequestException as e:
-        print("Error fetching the webpage: {}".format(e))
-        return
-    # parse data
-    soup = BeautifulSoup(response.content, 'html.parser')
-    table = soup.find("table", id="exchange-rates-table")
-    rows = table.tbody.find_all("tr")
-
-    for row in rows:
-        tds = row.find_all("td")
-        currency = tds[0].text
-        code = currency[1:4]
-        cashBuying = tds[1].text
-        cashSelling = tds[2].text
-        tx_buying = tds[3].text
-        tx_selling = tds[4].text
-        print("{}:\tCB:{}\tCS:{}\ttxB:{}\ttxS:{}".format(code, cashBuying, cashSelling, tx_buying, tx_selling))
-
+        # Handle network and request-related errors specifically
+        return {"status": "failure", "bank_id": "AWIN", "error": f"Request failed for CBET: {e}"}
+    except AttributeError:
+        # Handle parsing errors specifically
+        return {"status": "failure", "bank_id": "AWIN", "error": f"Data extraction failed for CBET"}
+        # all, other errors
+    except Exception as e:
+        return {"status": "failure", "bank_id": "AWIN", "error": f"An unexpected error occurred for CBET: {e}"}
+    
 def DASH(URL): # BeautifulSoup
     # transaction and cash rates are in two tables and made visible by css
     # so i can extract data without using selenium to make tables visible
     try:
         response = requests.get(URL)
         response.raise_for_status()
+        # parse data
+        soup = BeautifulSoup(response.content, 'html.parser')
+        tables = soup.find_all("table")
+        # initialize exchange-rates list
+        exchange_rates = []
+        # get data for each table
+        for table in tables:
+            first_row = table.tbody.find_all("tr")[0]
+            rate_type = first_row.find_all("td")[2]
+            rows = table.tbody.find_all("tr")
+            # print(rate_type.text)
+            for row in rows:
+                tds = row.find_all("td")
+                currency = tds[0].text
+                code = currency[1:4]
+                # depending on the rate_type store in corresponding variable
+                if rate_type.text == "Cash Buying":
+                    cashBuying = tds[2].text
+                    cashSelling = tds[3].text
+                    # store data
+                    data = {
+                        "bank_id": "DASH",
+                        "currency": code,
+                        "cash_buying":  cashBuying,
+                        "cash_selling": cashSelling,
+                    }
+                    exchange_rates.append(data)
+                    print("{}:\tCB:{}\tCS:{}\t".format(code, cashBuying, cashSelling))
+                else:
+                    tx_buying = tds[2].text
+                    tx_selling = tds[2].text
+                    # here we just add the transaction rates to the existing
+                    # data entry
+                    for entry in exchange_rates:
+                        if entry['currency'] == code:
+                            entry['transactional_buying'] = tx_buying
+                            entry['transactional_selling'] = tx_selling
+                    print("{}:\ttxB:{}\ttxS:{}".format(code, tx_buying, tx_selling))
+        # return rates-list
+        return {"status": "success", "bank_id": "DASH", "data": exchange_rates}
     except requests.exceptions.RequestException as e:
-        print("Error fetching the webpage: {}".format(e))
-        return
-    # parse data
-    soup = BeautifulSoup(response.content, 'html.parser')
-    tables = soup.find_all("table")
-    # get data for each table
-    for table in tables:
-        first_row = table.tbody.find_all("tr")[0]
-        rate_type = first_row.find_all("td")[2]
-        rows = table.tbody.find_all("tr")
-        # print(rate_type.text)
-        for row in rows:
-            tds = row.find_all("td")
-            currency = tds[0].text
-            code = currency[1:4]
-            # depending on the rate_type store in corresponding variable
-            if rate_type.text == "Cash Buying":
-                cashBuying = tds[2].text
-                cashSelling = tds[3].text
-                print("{}:\tCB:{}\tCS:{}\t".format(code, cashBuying, cashSelling))
-            else:
-                tx_buying = tds[2].text
-                tx_selling = tds[2].text
-                print("{}:\ttxB:{}\ttxS:{}".format(code, tx_buying, tx_selling))
-
+        # Handle network and request-related errors specifically
+        return {"status": "failure", "bank_id": "DASH", "error": f"Request failed for CBET: {e}"}
+    except AttributeError:
+        # Handle parsing errors specifically
+        return {"status": "failure", "bank_id": "DASH", "error": f"Data extraction failed for CBET"}
+        # all, other errors
+    except Exception as e:
+        return {"status": "failure", "bank_id": "DASH", "error": f"An unexpected error occurred for CBET: {e}"}
+  
 def ABYS(URL): # BeautifulSoup
     # transaction and cash rates are in one paginated table
     # so i can extract data without using selenium to make tables visible
     try:
         response = requests.get(URL)
         response.raise_for_status()
+        # parse data
+        soup = BeautifulSoup(response.content, 'html.parser')
+        table = soup.find("table", id="tablepress-15")
+        rows = table.tbody.find_all("tr")
+        # initialize exchange-rates list
+        exchange_rates = []
+        # first section of table shows cash rates (rows 2-11)
+        # while second section(rows 14-31) show transactional rates
+        for index in range(2, 12):
+            tds = rows[index].find_all("td")
+            data = {
+                "bank_id": "ABYS",
+                "currency": tds[0].text,
+                "cash_buying":  tds[1].text,
+                "cash_selling": tds[2].text,
+            }
+            exchange_rates.append(data)
+            # print(data)
+        # print("==============")
+        # get a list of currencies stored already
+        currencies = [rate["currency"] for rate in exchange_rates]
+        for index in range(14, 32):
+            tds = rows[index].find_all("td")
+            # update if rate exists or create with just tx rates
+            if tds[0].text in currencies:
+                exchange_rates[]['transactional_buying'] = tds[1].text
+                #entry['transactional_selling'] = tds[2].text
+                print("entry")
+            else:
+                data = {
+                    "bank_id": "ABYS",
+                    "currency": tds[0].text,
+                    "cash_buying":  "0",
+                    "cash_selling": "0",
+                    "transactional_buying":  tds[1].text,
+                    "transactional_selling": tds[2].text,
+                }
+                exchange_rates.append(data)
+                print(data)
+
+
+
     except requests.exceptions.RequestException as e:
         print("Error fetching the webpage: {}".format(e))
         return
-    # parse data
-    soup = BeautifulSoup(response.content, 'html.parser')
-    table = soup.find("table", id="tablepress-15")
-    rows = table.tbody.find_all("tr")
-    # first section of table shows cash rates (rows 2-11)
-    # while second section(rows 14-31) show transactional rates
-    for index in range(2, 12):
-        tds = rows[index].find_all("td")
-        for td in tds:
-            print(td.text)
-    print("==============")
-    for index in range(14, 32):
-        tds = rows[index].find_all("td")
-        for td in tds:
-            print(td.text)
-
+    
 def WEGA(URL): # API CALL
     # use Chrome-like headers
     headers = {
