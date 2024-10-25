@@ -649,9 +649,24 @@ def AMHR(URL): # BeautifulSoup
     except requests.exceptions.RequestException as e:
         print("Error fetching the webpage: {}".format(e))
         return
-    print(URL)
+    # parse data
+    soup = BeautifulSoup(response.content, 'html.parser')
+    # find the table using its cointaining div since it has a unique class name
+    table = soup.find("table", id="wpr-data-table")
+    rows = table.tbody.find_all("tr")
+    for row in rows:
+        tds = row.find_all("td")
+        #  no title row
+        if rows.index(row) == 6:
+            continue
+        tds = row.find_all("td")
+        currency = tds[0].text.strip()
+        code = currency[-4:-1]
+        cashBuying = tds[1].text.strip()
+        cashSelling = tds[2].text.strip()
+        print("{}:\tCB:{}\tCS:{}".format(code, cashBuying, cashSelling))
 
-# if __name__ == '__main__':
+if __name__ == '__main__':
     # CBET('https://combanketh.et/cbeapi/daily-exchange-rates')
     # DEET('https://dbe.com.et/')
     # AWIN('https://awashbank.com/exchange-historical/')
