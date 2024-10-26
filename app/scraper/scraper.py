@@ -16,5 +16,3 @@ for bank_code in banks_list:
     function = getattr(scripts, bank_code)
     link = bank_url[bank_code]["URL"]
     function(link)
-# move functions to separate modules
-
