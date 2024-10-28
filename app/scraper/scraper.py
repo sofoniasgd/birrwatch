@@ -23,7 +23,20 @@ def script_caller():
         # call each function with it url
         function = getattr(scripts, bank_code)
         link = bank_url[bank_code]["URL"]
-        status = function(link)
+        # wrap in try clause to catch any errors
+        try:
+            status = function(link)
+        except requests.exceptions.RequestException as e:
+            # Handle network and request-related errors specifically
+            return {"status": "failure", "error": f"Request failed for CBET: {e}"}
+        except AttributeError:
+            # Handle parsing errors specifically
+            return {"status": "failure", "error": f"Data extraction failed for CBET"}
+        # all, other errors
+        except Exception as e:
+            return {"status": "failure", "bank_id": "CBET", "error": f"An unexpected error occurred for CBET: {e}"}
+   
+
         # status will return a dict with:
         #   status:success or failure
         #   bank-id and data or error
