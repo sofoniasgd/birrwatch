@@ -1,6 +1,8 @@
-from .app import db
+from app.db import db
 from datetime import datetime
+from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects.mysql import DECIMAL
+
 
 # create models for the tables
 class ScrapingLogs(db.Model):
