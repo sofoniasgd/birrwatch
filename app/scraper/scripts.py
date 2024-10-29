@@ -167,32 +167,43 @@ def DASH(URL): # BeautifulSoup
             rows = table.tbody.find_all("tr")
             # print(rate_type.text)
             for row in rows:
+                # skip first row
+                if rows.index(row) == 0:
+                    continue
                 tds = row.find_all("td")
                 currency = tds[0].text
                 code = currency[1:4]
                 # depending on the rate_type store in corresponding variable
                 if rate_type.text == "Cash Buying":
-                    cashBuying = tds[2].text
-                    cashSelling = tds[3].text
                     # store data
                     data = {
                         "bank_id": "DASH",
                         "currency": code,
-                        "cash_buying":  cashBuying,
-                        "cash_selling": cashSelling
+                        "cash_buying":  tds[2].text,
+                        "cash_selling": tds[3].text,
+                        "transactional_buying": "0",
+                        "transactional_selling": "0"
                     }
                     exchange_rates.append(data)
-                    print("{}:\tCB:{}\tCS:{}\t".format(code, cashBuying, cashSelling))
                 else:
-                    tx_buying = tds[2].text
-                    tx_selling = tds[2].text
+                    currencies = [rate["currency"] for rate in exchange_rates]
                     # here we just add the transaction rates to the existing
-                    # data entry
-                    for entry in exchange_rates:
-                        if entry['currency'] == code:
-                            entry['transactional_buying'] = tx_buying
-                            entry['transactional_selling'] = tx_selling
-                    print("{}:\ttxB:{}\ttxS:{}".format(code, tx_buying, tx_selling))
+                    # data entry if it exists
+                    if code in currencies:
+                        index = currencies.index((code))
+                        exchange_rates[index]['transactional_buying'] = tds[2].text
+                        exchange_rates[index]['transactional_selling'] = tds[3].text
+                    else:
+                        # new entry
+                        data = {
+                        "bank_id": "DASH",
+                        "currency": code,
+                        "cash_buying":  "0",
+                        "cash_selling": "0",
+                        "transactional_buying": tds[2].text,
+                        "transactional_selling": tds[3].text
+                        }
+                        exchange_rates.append(data)
         # return rates-list
         return {"status": "success", "bank_id": "DASH", "data": exchange_rates}
     except Exception as e:

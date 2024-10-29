@@ -1,8 +1,8 @@
-from apscheduler.schedulers.background import BackgroundScheduler
+from app.db import db, init_db
 from datetime import datetime
 from flask import Flask, jsonify, request
-from flask_sqlalchemy import SQLAlchemy
-from .scraper.scraper import script_caller
+from .scheduler import start_scheduler, stop_scheduler
+
 
 
 app = Flask(__name__)
@@ -13,9 +13,7 @@ db_uri = 'mysql+pymysql://at_dev_usr:at_dev_pwd@localhost/birrwatch_db'
 app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-
-# Create the database connection
-db = SQLAlchemy(app)
+init_db(app)
 
 # import models for the tables
 from .models import ScrapingLogs, ExchangeRates, HistoricalMetrics, BankCurrencies
@@ -23,30 +21,22 @@ from .models import ScrapingLogs, ExchangeRates, HistoricalMetrics, BankCurrenci
 
 # !!!!!!! configure the scheduler !!!!!!!!!!
 # ==============================================
-scheduler = BackgroundScheduler()
-
-def scheduled_scraping():
-    """Function that will be scheduled to run scraping jobs."""
-    script_caller()
-
-# Schedule the job to run at 4 AM every day
-scheduler.add_job(scheduled_scraping, 'cron', hour=4, minute=0)
-
-# Start the scheduler
-scheduler.start()
-
-# Ensure scheduler shuts down with the app
-@app.before_first_request
-def initialize_scheduler():
-    """Starts the scheduler only if it's not already running."""
-    if not scheduler.running:
-        scheduler.start()
+# Ensure scheduler starts and shuts down with the app
+with app.app_context():
+    # your code here to do things before first request
+    """Start the scheduler once when the first request is received"""
+    start_scheduler()
 
 @app.teardown_appcontext
 def shutdown_scheduler(exception=None):
     """Shut down the scheduler when the app context ends."""
-    scheduler.shutdown(wait=False)
+    # stop_scheduler()
+    pass
 # ==============================================
+
+@app.route('/', methods=['GET'])
+def hello():
+    return("landing page")
 
 # get exchange rates
 @app.route('/exchange_rates/<bank_id>/<currency_code>', methods=['GET'])
@@ -119,4 +109,4 @@ def log_scraping():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
