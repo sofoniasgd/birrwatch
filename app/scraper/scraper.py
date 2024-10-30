@@ -70,3 +70,4 @@ def script_caller():
                 # Rollback if there's an error
                 db.session.rollback() 
                 print(f"Error occurred while adding records: {e}")
+            # !!! store logging data to scraping_logs table !!!!
