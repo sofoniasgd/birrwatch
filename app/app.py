@@ -1,11 +1,11 @@
 from app.db import db, init_db
 from datetime import datetime
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template, url_for
 from .scheduler import start_scheduler, stop_scheduler
 # import the app instance
 from app.app_instance import app
 
-
+# ===============================
 # app = Flask(__name__)
 
 # Configure the MySQL database
@@ -15,26 +15,30 @@ from app.app_instance import app
 #app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # init_db(app)
+# !!^^^ moved to app_instance.py ^^^!!
+# ==============================
 
 # import models for the tables
 from .models import ScrapingLogs, ExchangeRates, HistoricalMetrics, BankCurrencies
 
 
-# !!!!!!! configure the scheduler !!!!!!!!!!
+# !!!!!!!   configure the scheduler   !!!!!!!!!!
 # ==============================================
 # 
 start_scheduler()
-
-@app.teardown_appcontext
-def shutdown_scheduler(exception=None):
-    """Shut down the scheduler when the app context ends."""
-    # stop_scheduler()
-    pass
+#
 # ==============================================
 
+# default route, launches the dashboard
 @app.route('/', methods=['GET'])
-def hello():
-    return("landing page")
+@app.route('/dashboard', methods=['GET'])
+def dashboard():
+    return render_template('dashboard.html')
+
+@app.route('/about', methods=['GET'])
+def about():
+    return render_template('about.html')
+
 
 # get exchange rates
 @app.route('/exchange_rates/<bank_id>/<currency_code>', methods=['GET'])
@@ -107,4 +111,4 @@ def log_scraping():
 
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)
