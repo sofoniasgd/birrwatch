@@ -2,18 +2,19 @@ from app.db import db, init_db
 from datetime import datetime
 from flask import Flask, jsonify, request
 from .scheduler import start_scheduler, stop_scheduler
+# import the app instance
+from app.app_instance import app
 
 
-
-app = Flask(__name__)
+# app = Flask(__name__)
 
 # Configure the MySQL database
 # use pymysql bindings
-db_uri = 'mysql+pymysql://at_dev_usr:at_dev_pwd@localhost/birrwatch_db'
-app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# db_uri = 'mysql+pymysql://at_dev_usr:at_dev_pwd@localhost/birrwatch_db'
+# app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
+#app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-init_db(app)
+# init_db(app)
 
 # import models for the tables
 from .models import ScrapingLogs, ExchangeRates, HistoricalMetrics, BankCurrencies
@@ -21,11 +22,8 @@ from .models import ScrapingLogs, ExchangeRates, HistoricalMetrics, BankCurrenci
 
 # !!!!!!! configure the scheduler !!!!!!!!!!
 # ==============================================
-# Ensure scheduler starts and shuts down with the app
-with app.app_context():
-    # your code here to do things before first request
-    """Start the scheduler once when the first request is received"""
-    start_scheduler()
+# 
+start_scheduler()
 
 @app.teardown_appcontext
 def shutdown_scheduler(exception=None):
