@@ -2,11 +2,11 @@
 """Web Scraping module
     Handles the data collection and storage to database
 """
+
 from app.db import db
 from app.scraper.config import bank_url
 from datetime import datetime
 from app.models import ScrapingLogs, ExchangeRates
-import requests
 from . import scripts
 
 banks_list = ['CBET', 'DEET', 'AWIN', 'DASH', 'ABYS', 'WEGA', 'UNTD', 'NIBI',\
@@ -52,6 +52,22 @@ def script_caller():
                         date = datetime.now().date(),
                         created_at = datetime.now()
                     )
-                    print(single_rate)
-                    #db.session.add(single_rate)
-                    #db.session.commit()
+                    # print(f"Bank ID: {single_rate.bank_id}, "
+                    #    f"Currency Code: {single_rate.currency_code}, "
+                    #    f"Cash Buy: {single_rate.cash_buy}, "
+                    #    f"Cash Sell: {single_rate.cash_sell}, "
+                    #    f"TX Buy: {single_rate.tx_buy}, "
+                    #    f"TX Sell: {single_rate.tx_sell}, "
+                    #    f"Date: {single_rate.date}, "
+                    #    f"Created At: {single_rate.created_at}")
+                    db.session.add(single_rate)
+            # either all records are stored or none are
+            # Commit all records at once
+            try:
+                db.session.commit()
+                print(f"Successfully added {len(data)} records.")
+            except Exception as e:
+                # Rollback if there's an error
+                db.session.rollback() 
+                print(f"Error occurred while adding records: {e}")
+            # !!! store logging data to scraping_logs table !!!!
