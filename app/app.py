@@ -39,9 +39,65 @@ def dashboard():
 def about():
     return render_template('about.html')
 
+# get all exchange rates for a given date
+@app.route('/api/exchange_rates', methods=['GET'])
+def get_all_exchange_rates():
+    """Retrieve all exchange rates for a specific date."""
+    date = request.args.get('date')
 
-# get exchange rates
-@app.route('/exchange_rates/<bank_id>/<currency_code>', methods=['GET'])
+    if not date:
+        return jsonify({"error": "Date parameter is required"}), 400
+
+    query = ExchangeRates.query.filter(ExchangeRates.date == datetime.strptime(date, '%Y-%m-%d').date())
+    rates = query.all()
+    # split the data into cash and tx rates
+    # skip empty values
+    cash_rates = [
+        {
+            'bank_id': rate.bank_id,
+            'currency_code': rate.currency_code,
+            'cash_buy': rate.cash_buy,
+            'cash_sell': rate.cash_sell
+        } for rate in rates if rate.cash_buy != 0.0
+    ]
+    tx_rates = [
+        {
+            'bank_id': rate.bank_id,
+            'currency_code': rate.currency_code,
+            'tx_buy': rate.tx_buy,
+            'tx_sell': rate.tx_sell
+        } for rate in rates if rate.tx_buy != 0.0
+    ]
+    result = {
+        'cash_rates': cash_rates,
+        'tx_rates': tx_rates
+    }
+    return jsonify(result)
+
+# get all banks rate for a specific currency
+@app.route('/api/banks_rates/<currency_code>', methods=['GET'])
+def get_banks_rates(currency_code):
+    """Retrieve exchange rates for a specific currency across banks."""
+    date = request.args.get('date')  # Optional date filter
+
+    query = ExchangeRates.query.filter_by(currency_code=currency_code)
+    if date:
+        query = query.filter(ExchangeRates.date == datetime.strptime(date, '%Y-%m-%d').date())
+    
+    rates = query.all()
+    result = [
+        {
+            'bank_id': rate.bank_id,
+            'cash_buy': rate.cash_buy,
+            'cash_sell': rate.cash_sell,
+            'tx_buy': rate.tx_buy,
+            'tx_sell': rate.tx_sell
+        } for rate in rates
+    ]
+    return jsonify(result)
+
+# get exchange rates for a specific bank and currency
+@app.route('/api/exchange_rates/<bank_id>/<currency_code>', methods=['GET'])
 def get_exchange_rates(bank_id, currency_code):
     """Retrieve exchange rates for a specific bank and currency."""
     date = request.args.get('date')  # Optional date filter
@@ -63,7 +119,7 @@ def get_exchange_rates(bank_id, currency_code):
     return jsonify(result)
 
 # Fetch Historical Metrics by Currency
-@app.route('/historical_metrics/<currency_code>', methods=['GET'])
+@app.route('/api/historical_metrics/<currency_code>', methods=['GET'])
 def get_historical_metrics(currency_code):
     """Retrieve historical metrics for a specific currency across banks."""
     start_date = request.args.get('start_date')  # Optional start date filter
@@ -87,8 +143,8 @@ def get_historical_metrics(currency_code):
     ]
     return jsonify(result)
 
-# Log a Scraping attempt
-@app.route('/log_scraping', methods=['POST'])
+# get Logs of Scraping attempts
+@app.route('/api/log_scraping', methods=['POST'])
 def log_scraping():
     """Log scraping activity for a bank."""
     data = request.get_json()
@@ -111,4 +167,4 @@ def log_scraping():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()

@@ -1,4 +1,4 @@
-![birrwatch logo](static/images/birrwatch1.png)
+![birrwatch logo](app/static/images/birrwatch1.png)
 ## BirrWatch
 BirrWatch is a web platform that consolidates foreign exchange rates from multiple Ethiopian banks, providing users with up-to-date and easily accessible currency information. The platform automatically scrapes exchange rate data from over 20 banks and displays the rates in a simple, user-friendly interface.
 ### Project Goal

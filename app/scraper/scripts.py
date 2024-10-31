@@ -269,9 +269,10 @@ def WEGA(URL): # API CALL
         # initialize exchange-rates list
         exchange_rates = []
         for item in data:
+            currency = item["attributes"]["code"]
             data = {
                 "bank_id": "WEGA",
-                "currency": item["attributes"]["code"],
+                "currency": currency[0:3],
                 "cash_buying":  item["attributes"]["buying"],
                 "cash_selling": item["attributes"]["selling"],
                 "transactional_buying":  item["attributes"]["tra_buying"],
@@ -735,7 +736,6 @@ def ZEMZ(URL): # BeautifulSoup
         data_div = soup.find("div", class_="elementor-element-2cbffac")
         # setting attribute to get the direct decsendant divs(rows) only
         rows = data_div.find_all("div", recursive=False)
-        print(type(rows))
         # initialize exchange-rates list
         exchange_rates = []
         for row in rows:

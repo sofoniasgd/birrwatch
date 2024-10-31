@@ -1,1 +1,102 @@
 {% extends "base.html" %}
+
+{% block content_table %}
+<div x-data="exchangeRates" x-init="fetchData()" class="container mt-4">
+    <!-- Date Picker -->
+    <div class="row">
+        <div class="col-3">
+            <label for="date" class="form-label">Date:</label>
+            <input type="date" id="date" x-model="date" @change="fetchData()" class="form-control" />
+        </div>
+        <!-- Currency Dropdown -->
+    
+        <div class="col-5">
+            <div class="dropdown">
+                <label for="currency">Select Currency:</label>
+                <select class="dropdown-toggle" id="currency" x-model="selectedCurrency" @change="filterRates()">
+                    <option value="">All Currencies</option>
+                    <!-- Dynamically populate options based on available currencies -->
+                    <template x-for="currency in availableCurrencies" :key="currency">
+                        <option class="dropdown-item" :value="currency" x-text="currency"></option>
+                    </template>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs Navigation -->
+    <ul class="nav nav-tabs" id="exchangeRateTabs">
+        <li class="nav-item">
+            <a href="#" 
+               @click.prevent="activeTab = 'cash'" 
+               :class="{ 'active': activeTab === 'cash' }" 
+               class="nav-link">
+                Cash Rates
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#" 
+               @click.prevent="activeTab = 'transactional'" 
+               :class="{ 'active': activeTab === 'transactional' }" 
+               class="nav-link">
+                Transactional Rates
+            </a>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content mt-3">
+        <!-- Cash Rates Table -->
+        <div x-show="activeTab === 'cash'" class="table-responsive">
+            <table class="table table-bordered table-striped table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th @click="setSort('currency_code')">Currency</th>
+                        <th @click="setSort('bank_id')">Bank ID</th>
+                        <th @click="setSort('cash_buy')">Buying Rate</th>
+                        <th @click="setSort('cash_sell')">Selling Rate</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template x-for="rate in filteredCashRates">
+                        <tr>
+                            <td x-text="rate.currency_code"></td>
+                            <td x-text="rate.bank_id"></td>
+                            <td x-text="rate.cash_buy"></td>
+                            <td x-text="rate.cash_sell"></td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Transactional Rates Table -->
+        <div x-show="activeTab === 'transactional'" class="table-responsive">
+            <table class="table table-bordered table-striped table-hover">
+                <thead class="thead-light">
+                    <tr>
+                        <th @click="setSort('currency_code')">Currency</th>
+                        <th @click="setSort('bank_id')">Bank ID</th>
+                        <th @click="setSort('tx_buy')">Buying Rate</th>
+                        <th @click="setSort('tx_sell')">Selling Rate</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template x-for="rate in filteredTransactionalRates">
+                        <tr>
+                            <td x-text="rate.currency_code"></td>
+                            <td x-text="rate.bank_id"></td>
+                            <td x-text="rate.tx_buy"></td>
+                            <td x-text="rate.tx_sell"></td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content_graph %}
+
+{% endblock %}
