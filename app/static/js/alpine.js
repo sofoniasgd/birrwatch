@@ -37,6 +37,11 @@ document.addEventListener('alpine:init', () => {
             }
         },
 
+        selectCurrency(currency) {
+            this.selectedCurrency = currency;
+            this.filterRates();
+        },
+
         // Filters rates by selected currency
         filterRates() {
             if (this.selectedCurrency) {

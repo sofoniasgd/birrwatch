@@ -11,15 +11,18 @@
         <!-- Currency Dropdown -->
     
         <div class="col-5">
-            <div class="dropdown">
-                <label for="currency">Select Currency:</label>
-                <select class="dropdown-toggle" id="currency" x-model="selectedCurrency" @change="filterRates()">
-                    <option value="">All Currencies</option>
-                    <!-- Dynamically populate options based on available currencies -->
-                    <template x-for="currency in availableCurrencies" :key="currency">
-                        <option class="dropdown-item" :value="currency" x-text="currency"></option>
+            <!-- Currency Bootstrap Dropdown -->
+            <label for="currency">Select Currency:</label>
+            <div class="dropdown" x-data="{ show: false }" @click.away="show = false">
+                <button class="btn btn-secondary dropdown-toggle" type="button" @click="show = !show">
+                    <span x-text="selectedCurrency || 'All Currencies'"></span>
+                </button>
+                <div class="dropdown-menu" x-show="show" style="display: block;">
+                    <a class="dropdown-item" href="#" @click="selectCurrency('')">All Currencies</a>
+                    <template x-for="currency in availableCurrencies">
+                        <a class="dropdown-item" href="#" @click="selectCurrency(currency)" x-text="currency"></a>
                     </template>
-                </select>
+                </div>
             </div>
         </div>
     </div>
