@@ -1,4 +1,4 @@
-![birrwatch logo](static/images/birrwatch1.png)
+![birrwatch logo](app/static/images/birrwatch1.png)
 ## BirrWatch
 BirrWatch is a web platform that consolidates foreign exchange rates from multiple Ethiopian banks, providing users with up-to-date and easily accessible currency information. The platform automatically scrapes exchange rate data from over 20 banks and displays the rates in a simple, user-friendly interface.
 ### Project Goal
@@ -19,19 +19,19 @@ Bootstrap: For responsive and modern styling.
 Chart.js: To create interactive data visualizations.
 
 ### Installation
-Clone this repository:
+Clone this repository:  
 `git clone https://github.com/sofoniasgd/birrwatch.git`
 
-Navigate into the project directory:
+Navigate into the project directory:  
 `cd birrwatch`
 
-Create a virtual enviroment
+Create a virtual enviroment  
 `python -m venv venv`
 
-Activate the virtual enviroment
+Activate the virtual enviroment  
 `source venv/bin/activate`
 
-Install the required dependencies:
+Install the required dependencies:  
 `pip install -r requirements.txt`
 
 Set up the MySQL database:
@@ -43,7 +43,9 @@ Selenium Setup (***make sure to install have both webdriver and browser***)
 - extract the archive and place the executable `chromedriver` in `/usr/bin/`
 - a guide on how to setup selenium: https://www.geeksforgeeks.org/how-to-install-selenium-in-python/
 
-Run the application:
+The data scrapung is set to run at 4Am everyday and can be changed from  
+`scheduler.py`
+Run the application:  
 `flask run`
 
 ### License

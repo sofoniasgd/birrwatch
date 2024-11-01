@@ -12,7 +12,6 @@ from . import scripts
 banks_list = ['CBET', 'DEET', 'AWIN', 'DASH', 'ABYS', 'WEGA', 'UNTD', 'NIBI',\
                 'CBOR', 'LIBS', 'ORIR', 'ZEME', 'BUNA', 'BERH', 'ABAY', 'ABSC',\
                 'ENAT', 'DEGA', 'ZEMZ', 'GOBT', 'HIJR', 'TSCP', 'AMHR']
-
 def script_caller():
     """ main scraping function.
         calls all scraping functions, collects data,
@@ -22,7 +21,7 @@ def script_caller():
     # and call subsequent function
     for bank_code in banks_list:
         index = banks_list.index(bank_code)
-        print("|| Executing script {} of {} code: {}||".format(index, len(banks_list), bank_code))
+        print("|| Executing script {} of {} code: {} ||".format(index, len(banks_list), bank_code))
         # call each function with it url
         function = getattr(scripts, bank_code)
         link = bank_url[bank_code]["URL"]

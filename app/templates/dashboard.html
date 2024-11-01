@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block content_table %}
+<div x-data="exchangeRates" x-init="fetchData()" class="container mt-2">
+    <!-- Date Picker -->
+    <div class="row">
+        <div class="col-3">
+            <label for="date" class="form-label">Date:</label>
+            <input type="date" id="date" x-model="date" @change="fetchData()" class="form-control" />
+        </div>
+        <!-- Currency Dropdown -->
+    
+        <div class="col-5">
+            <label for="date" class="form-label">Select Currency:</label>
+            <!-- Currency Bootstrap Dropdown -->
+            <div x-data="{ isOpen: false }" class="dropdown">
+                <!-- Trigger Button -->
+                <button @click="isOpen = !isOpen;" type="button" class="btn btn-secondary dropdown-toggle">
+                    <span x-text="selectedCurrency"></span>
+                </button>
+                <div x-show="isOpen" @click.away="isOpen = false" class="dropdown-menu show">
+                    <a class="dropdown-item" href="#" @click="isOpen = false; selectCurrency('All Currencies')">All Currencies</a>
+                    <template x-for="currency in availableCurrencies">
+                        <a class="dropdown-item" href="#" @click="isOpen = false; selectCurrency(currency)" x-text="currency"></a>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs Navigation -->
+    <div class="container mt-2">
+        <ul class="nav nav-tabs" id="exchangeRateTabs">
+            <li class="nav-item">
+                <a href="#" 
+                @click.prevent="activeTab = 'cash'" 
+                :class="{ 'active': activeTab === 'cash' }" 
+                class="nav-link">
+                    Cash Rates
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" 
+                @click.prevent="activeTab = 'transactional'" 
+                :class="{ 'active': activeTab === 'transactional' }" 
+                class="nav-link">
+                    Transactional Rates
+                </a>
+            </li>
+        </ul>
+    </div>
+    
+
+    <!-- Tab Content -->
+    <div class="tab-content mt-3">
+        <!-- Cash Rates Table -->
+        <div x-show="activeTab === 'cash'" class="table-responsive">
+            <table class="table table-bordered table-striped table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th @click="setSort('currency_code')">Currency</th>
+                        <th @click="setSort('bank_id')">Bank ID</th>
+                        <th @click="setSort('cash_buy')">Buying Rate</th>
+                        <th @click="setSort('cash_sell')">Selling Rate</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template x-for="rate in filteredCashRates">
+                        <tr>
+                            <td x-text="rate.currency_code"></td>
+                            <td x-text="rate.bank_id"></td>
+                            <td x-text="rate.cash_buy"></td>
+                            <td x-text="rate.cash_sell"></td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Transactional Rates Table -->
+        <div x-show="activeTab === 'transactional'" class="table-responsive">
+            <table class="table table-bordered table-striped table-hover">
+                <thead class="thead-light">
+                    <tr>
+                        <th @click="setSort('currency_code')">Currency</th>
+                        <th @click="setSort('bank_id')">Bank ID</th>
+                        <th @click="setSort('tx_buy')">Buying Rate</th>
+                        <th @click="setSort('tx_sell')">Selling Rate</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template x-for="rate in filteredTransactionalRates">
+                        <tr>
+                            <td x-text="rate.currency_code"></td>
+                            <td x-text="rate.bank_id"></td>
+                            <td x-text="rate.tx_buy"></td>
+                            <td x-text="rate.tx_sell"></td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content_graph %}
+
+{% endblock %}
