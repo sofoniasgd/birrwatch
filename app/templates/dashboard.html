@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content_table %}
-<div x-data="exchangeRates" x-init="fetchData()" class="container mt-4">
+<div x-data="exchangeRates" x-init="fetchData()" class="container mt-2">
     <!-- Date Picker -->
     <div class="row">
         <div class="col-3">
@@ -11,16 +11,17 @@
         <!-- Currency Dropdown -->
     
         <div class="col-5">
+            <label for="date" class="form-label">Select Currency:</label>
             <!-- Currency Bootstrap Dropdown -->
-            <label for="currency">Select Currency:</label>
-            <div class="dropdown" x-data="{ show: false }" @click.away="show = false">
-                <button class="btn btn-secondary dropdown-toggle" type="button" @click="show = !show">
-                    <span x-text="selectedCurrency || 'All Currencies'"></span>
+            <div x-data="{ isOpen: false }" class="dropdown">
+                <!-- Trigger Button -->
+                <button @click="isOpen = !isOpen;" type="button" class="btn btn-secondary dropdown-toggle">
+                    <span x-text="selectedCurrency"></span>
                 </button>
-                <div class="dropdown-menu" x-show="show" style="display: block;">
-                    <a class="dropdown-item" href="#" @click="selectCurrency('')">All Currencies</a>
+                <div x-show="isOpen" @click.away="isOpen = false" class="dropdown-menu show">
+                    <a class="dropdown-item" href="#" @click="isOpen = false; selectCurrency('All Currencies')">All Currencies</a>
                     <template x-for="currency in availableCurrencies">
-                        <a class="dropdown-item" href="#" @click="selectCurrency(currency)" x-text="currency"></a>
+                        <a class="dropdown-item" href="#" @click="isOpen = false; selectCurrency(currency)" x-text="currency"></a>
                     </template>
                 </div>
             </div>
@@ -28,24 +29,27 @@
     </div>
 
     <!-- Tabs Navigation -->
-    <ul class="nav nav-tabs" id="exchangeRateTabs">
-        <li class="nav-item">
-            <a href="#" 
-               @click.prevent="activeTab = 'cash'" 
-               :class="{ 'active': activeTab === 'cash' }" 
-               class="nav-link">
-                Cash Rates
-            </a>
-        </li>
-        <li class="nav-item">
-            <a href="#" 
-               @click.prevent="activeTab = 'transactional'" 
-               :class="{ 'active': activeTab === 'transactional' }" 
-               class="nav-link">
-                Transactional Rates
-            </a>
-        </li>
-    </ul>
+    <div class="container mt-2">
+        <ul class="nav nav-tabs" id="exchangeRateTabs">
+            <li class="nav-item">
+                <a href="#" 
+                @click.prevent="activeTab = 'cash'" 
+                :class="{ 'active': activeTab === 'cash' }" 
+                class="nav-link">
+                    Cash Rates
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" 
+                @click.prevent="activeTab = 'transactional'" 
+                :class="{ 'active': activeTab === 'transactional' }" 
+                class="nav-link">
+                    Transactional Rates
+                </a>
+            </li>
+        </ul>
+    </div>
+    
 
     <!-- Tab Content -->
     <div class="tab-content mt-3">

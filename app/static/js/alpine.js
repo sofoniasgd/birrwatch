@@ -7,7 +7,7 @@ document.addEventListener('alpine:init', () => {
         sortOrder: 'asc',     // Default sort order is ascending
         activeTab: 'cash',    // Default active tab is cash
         availableCurrencies: [], // List of all unique currencies
-        selectedCurrency: '', // Currently selected currency
+        selectedCurrency: 'All Currencies', // Currently selected currency
         filteredCashRates: [],
         filteredTransactionalRates: [],
 
@@ -37,19 +37,19 @@ document.addEventListener('alpine:init', () => {
             }
         },
 
-        selectCurrency(currency) {
+        selectCurrency(currency) { 
             this.selectedCurrency = currency;
             this.filterRates();
         },
 
         // Filters rates by selected currency
         filterRates() {
-            if (this.selectedCurrency) {
-                this.filteredCashRates = this.cashRates.filter(rate => rate.currency_code === this.selectedCurrency);
-                this.filteredTransactionalRates = this.transactionalRates.filter(rate => rate.currency_code === this.selectedCurrency);
-            } else {
+            if (this.selectedCurrency === 'All Currencies') {
                 this.filteredCashRates = this.cashRates;
                 this.filteredTransactionalRates = this.transactionalRates;
+            } else if (this.selectedCurrency) {
+                this.filteredCashRates = this.cashRates.filter(rate => rate.currency_code === this.selectedCurrency);
+                this.filteredTransactionalRates = this.transactionalRates.filter(rate => rate.currency_code === this.selectedCurrency);
             }
         },
 
