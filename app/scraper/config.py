@@ -47,11 +47,11 @@ bank_url = {
         "URL": "https://dbe.com.et/"
     },
     "AWIN" : {
-        'name': 'Awash Bank S.C.',
+        'name': 'Awash Bank',
         "URL" : "https://awashbank.com/exchange-historical/"
     },
     "DASH" : {
-        'name': 'Dashen Bank S.C.',
+        'name': 'Dashen Bank',
         "URL" : "https://dashenbanksc.com/daily-exchange-rates/"
     },
     "ABYS" : {
@@ -59,15 +59,15 @@ bank_url = {
         "URL" : "https://www.bankofabyssinia.com/exchange-rate-2/"
     },
     "WEGA" : {
-        'name': 'Wegagen Bank S.C.',
+        'name': 'Wegagen Bank',
         "URL" : "https://weg.back.strapi.wegagen.com/api/exchange-rates?populate=*"
     },
     "UNTD" : {
-        'name': 'Hibret Bank S.C.',
+        'name': 'Hibret Bank',
         "URL" : "https://www.hibretbank.com.et/"
     },
     "NIBI" : {
-        'name': 'Nib Int. Bank S.C.',
+        'name': 'Nib Int. Bank',
         "URL" : "https://www.nibbanksc.com/exchange-rate/"
     },
     "CBOR" : {
@@ -75,59 +75,59 @@ bank_url = {
         "URL" : "https://coopbankoromia.com.et/daily-exchange-rates/"
     },
     "LIBS" : {
-        'name': 'Lion Int. Bank S.C.',
+        'name': 'Lion Int. Bank',
         "URL" : "https://anbesabank.com/"
     },
     "ORIR" : {
-        'name': 'Oromia Bank S.C.',
+        'name': 'Oromia Bank',
         "URL" : "https://www.oromiabank.com/"
     },
     "ZEME" : {
-        'name': 'Zemen Bank S.C.',
+        'name': 'Zemen Bank',
         "URL" : "https://www.zemenbank.com/exchange-rates"
     },
     "BUNA" : {
-        'name': 'Bunna Bank S.C',
+        'name': 'Bunna Bank',
         "URL" : "https://bunnabanksc.com/foreign-exchange/"
     },
     "BERH" : {
-        'name': 'Berhan Bank S.C.',
+        'name': 'Berhan Bank',
         "URL" : "https://berhanbanksc.com/"
     },
     "ABAY" : {
-        'name': 'Abay Bank S.C.',
+        'name': 'Abay Bank',
         "URL" : "https://abaybank.com.et/exchange-rates/"
     },
     "ABSC" : {
-        'name': 'Addis Int. Bank S.C',
+        'name': 'Addis Int. Bank',
         "URL" : "https://addisbanksc.com/"
     },
     "ENAT" : {
-        'name': 'Enat Bank S.C.',
+        'name': 'Enat Bank',
         "URL" : "https://www.enatbanksc.com/"
     },
     "DEGA" : {
-        'name': 'Global Bank S.C',
+        'name': 'Global Bank',
         "URL" : "https://www.globalbankethiopia.com/"
     },
     "ZEMZ" : {
-        'name': 'ZamZam Bank S.C.',
+        'name': 'ZamZam Bank',
         "URL" : "https://zamzambank.com/exchange-rates/todays-exchange-rate/"
     },
     "GOBT" : {
-        'name': 'Goh Betoch Bank S.C.',
+        'name': 'Goh Betoch Bank',
         "URL" : "https://www.gohbetbank.com/todays-exchange-rate/"
     },
     "HIJR" : {
-        'name': 'Hijra Bank S.C.',
+        'name': 'Hijra Bank',
         "URL" : "https://hijra-bank.com/"
     },
     "TSCP" : {
-        'name': 'Tsehay Bank S.C.',
+        'name': 'Tsehay Bank',
         "URL" : "https://tsehaybank.com.et/exchange-rate/"
     },
     "AMHR" : {
-        'name': 'Amhara Bank S.C.',
+        'name': 'Amhara Bank',
         "URL" : "https://www.amharabank.com.et/exchange-rate/"
     }
 }

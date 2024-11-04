@@ -26,42 +26,42 @@ def script_caller():
         function = getattr(scripts, bank_code)
         link = bank_url[bank_code]["URL"]
         # wrap in try clause to catch any errors
+        # either store fetch error data(log) or store fetched data
         try:
             status = function(link)
         except Exception as e:
+            # log failed scraping attempt
+            log_entry = ScrapingLogs(
+                bank_id=bank_code,
+                url=link,
+                run_time=datetime.now(),
+                success=False,
+                next_run=datetime.now()
+            )
+            db.session.add(log_entry)
             print("ERROR: ", e)
         # extract data when no errors occured
         else:
-            # status will return a dict with:
-            #   status:success or failure
-            #   bank-id and data or error
-            if status["status"] == "success":
-                # store values
-                data = status["data"]
-                # data is a list of dict entries
-                # entry: bankid, currency, csbuying, cselling, tbuying, tsellingg
-                for rate in data:
-                    single_rate = ExchangeRates(
-                        bank_id = bank_code,
-                        currency_code = rate['currency'],
-                        cash_buy = rate['cash_buying'],
-                        cash_sell = rate['cash_selling'],
-                        tx_buy = rate['transactional_buying'],
-                        tx_sell = rate['transactional_selling'],
-                        date = datetime.now().date(),
-                        created_at = datetime.now()
-                    )
-                    # print(f"Bank ID: {single_rate.bank_id}, "
-                    #    f"Currency Code: {single_rate.currency_code}, "
-                    #    f"Cash Buy: {single_rate.cash_buy}, "
-                    #    f"Cash Sell: {single_rate.cash_sell}, "
-                    #    f"TX Buy: {single_rate.tx_buy}, "
-                    #    f"TX Sell: {single_rate.tx_sell}, "
-                    #    f"Date: {single_rate.date}, "
-                    #    f"Created At: {single_rate.created_at}")
-                    db.session.add(single_rate)
-            # either all records are stored or none are
-            # Commit all records at once
+            # status will return a dict with exchage data
+            data = status["data"]
+            # data is a list of dict entries
+            # entry: bankid, currency, csbuying, cselling, tbuying, tsellingg
+            for rate in data:
+                single_rate = ExchangeRates(
+                    bank_id = bank_code,
+                    currency_code = rate['currency'],
+                    cash_buy = rate['cash_buying'],
+                    cash_sell = rate['cash_selling'],
+                    tx_buy = rate['transactional_buying'],
+                    tx_sell = rate['transactional_selling'],
+                    date = datetime.now().date(),
+                    created_at = datetime.now()
+                )
+                db.session.add(single_rate)
+        # put a commit here to ensure that either all records are stored
+        # or failure logs are stored
+        # put commit code ina try catch to not propagate errors
+        finally:
             try:
                 db.session.commit()
                 print(f"Successfully added {len(data)} records.")
@@ -69,4 +69,18 @@ def script_caller():
                 # Rollback if there's an error
                 db.session.rollback() 
                 print(f"Error occurred while adding records: {e}")
-            # !!! store logging data to scraping_logs table !!!!
+            
+    # close the session
+    db.session.close()
+    # function call to calculate the historical metrics
+
+
+# function to calculate the historical metrics
+def calculate_historical_metrics():
+    """Calculate historical metrics for each bank."""
+    pass
+    # get all the banks
+    # get all the currencies
+    # get all the rates
+    # calculate the metrics
+    # store the metrics

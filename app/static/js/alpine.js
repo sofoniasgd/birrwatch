@@ -2,6 +2,7 @@ document.addEventListener('alpine:init', () => {
     Alpine.data('exchangeRates', () => ({
         cashRates: [],
         transactionalRates: [],
+        bankNames: [],
         date: new Date().toISOString().split('T')[0], // Default to current date,
         sortKey: 'currency',  // Default sort by currency
         sortOrder: 'asc',     // Default sort order is ascending
@@ -15,7 +16,18 @@ document.addEventListener('alpine:init', () => {
             try {
                 const response = await fetch(`/api/exchange_rates?date=${this.date}`);
                 const data = await response.json();
-                
+                // get bank names from api call
+                const bankNames = await fetch('/api/banks');
+                const bankData = await bankNames.json();
+                // replace bank id with bank name from bankData
+                data.cash_rates.forEach(rate => {
+                    rate.bank_id = bankData.find(bank => bank.bank_id === rate.bank_id).name;
+                });
+                data.tx_rates.forEach(rate => {
+                    rate.bank_id = bankData.find(bank => bank.bank_id === rate.bank_id).name;
+                });
+
+
                 // data contains two lists for cash and transactional rates
                 // split the data into two lists
                 this.cashRates = data.cash_rates || [];
@@ -40,6 +52,7 @@ document.addEventListener('alpine:init', () => {
         selectCurrency(currency) { 
             this.selectedCurrency = currency;
             this.filterRates();
+            this.sortData();
         },
 
         // Filters rates by selected currency
@@ -90,8 +103,8 @@ document.addEventListener('alpine:init', () => {
             };
 
             // Sort both tables by the chosen key and order
-            this.cashRates.sort(sortFn);
-            this.transactionalRates.sort(sortFn);
+            this.filteredCashRates.sort(sortFn);
+            this.filteredTransactionalRates.sort(sortFn);
         }
     }));
 });

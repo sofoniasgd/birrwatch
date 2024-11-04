@@ -58,10 +58,10 @@
             <table class="table table-bordered table-striped table-hover">
                 <thead class="thead-dark">
                     <tr>
-                        <th @click="setSort('currency_code')">Currency</th>
-                        <th @click="setSort('bank_id')">Bank ID</th>
-                        <th @click="setSort('cash_buy')">Buying Rate</th>
-                        <th @click="setSort('cash_sell')">Selling Rate</th>
+                        <th class="cursor-pointer" @click="setSort('currency_code')">Currency</th>
+                        <th class="cursor-pointer" @click="setSort('bank_id')">Bank</th>
+                        <th class="cursor-pointer" @click="setSort('cash_buy')">Buying Rate(Birr)</th>
+                        <th class="cursor-pointer" @click="setSort('cash_sell')">Selling Rate(Birr)</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -69,8 +69,8 @@
                         <tr>
                             <td x-text="rate.currency_code"></td>
                             <td x-text="rate.bank_id"></td>
-                            <td x-text="rate.cash_buy"></td>
-                            <td x-text="rate.cash_sell"></td>
+                            <td x-text="rate.cash_buy"><i class="bi bi-arrow-up-short"></i></td>
+                            <td x-text="rate.cash_sell"><i class="bi bi-arrow-down-short"></i></td>
                         </tr>
                     </template>
                 </tbody>
@@ -82,10 +82,10 @@
             <table class="table table-bordered table-striped table-hover">
                 <thead class="thead-light">
                     <tr>
-                        <th @click="setSort('currency_code')">Currency</th>
-                        <th @click="setSort('bank_id')">Bank ID</th>
-                        <th @click="setSort('tx_buy')">Buying Rate</th>
-                        <th @click="setSort('tx_sell')">Selling Rate</th>
+                        <th class="cursor-pointer" @click="setSort('currency_code')">Currency</th>
+                        <th class="cursor-pointer" @click="setSort('bank_id')">Bank</th>
+                        <th class="cursor-pointer" @click="setSort('tx_buy')">Buying Rate(Birr)</th>
+                        <th class="cursor-pointer" @click="setSort('tx_sell')">Selling Rate(Birr)</th>
                     </tr>
                 </thead>
                 <tbody>

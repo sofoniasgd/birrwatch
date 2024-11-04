@@ -4,6 +4,7 @@ from flask import Flask, jsonify, request, render_template, url_for
 from .scheduler import start_scheduler, stop_scheduler
 # import the app instance
 from app.app_instance import app
+from app.scraper.config import bank_url
 
 # ===============================
 # app = Flask(__name__)
@@ -165,6 +166,14 @@ def log_scraping():
 
     return jsonify({"message": "Log entry added successfully"}), 201
 
+# add an endpoint to get all bank names from config.py
+@app.route('/api/banks', methods=['GET'])
+def get_banks():
+    """Retrieve all bank names with IDs."""
+    result = []
+    for key, value in bank_url.items():
+        result.append({"bank_id": key, "name": value['name']})
+    return jsonify(result)
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=False)
