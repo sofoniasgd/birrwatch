@@ -131,3 +131,107 @@ bank_url = {
         "URL" : "https://www.amharabank.com.et/exchange-rate/"
     }
 }
+
+# currency codes and their names
+currency_codes = [
+    { 
+        "currency_code": "USD",
+        "name": "United States Dollar"
+    },
+    {
+        "currency_code": "EUR",
+        "name": "Euro"
+    },
+    {
+        "currency_code": "GBP",
+        "name": "British Pound"
+    },
+    {  
+        "currency_code": "JPY",
+        "name": "Japanese Yen"
+    },
+    {
+        "currency_code": "CNY",
+        "name": "Chinese Yuan"
+    },
+    {
+        "currency_code": "INR",
+        "name": "Indian Rupee"
+    },
+    {
+        "currency_code": "AUD",
+        "name": "Australian Dollar"
+    },
+    {
+        "currency_code": "CAD",
+        "name": "Canadian Dollar"
+    },
+    {
+        "currency_code": "CHF",
+        "name": "Swiss Franc"
+    },
+    {
+        "currency_code": "DJF",
+        "name": "Djiboutian Franc"
+    },
+    {
+        "currency_code": "SEK",
+        "name": "Swedish Krona"
+    },
+    {
+        "currency_code": "NOK",
+        "name": "Norwegian Krone"
+    },
+    {
+        "currency_code": "KES",
+        "name": "Kenyan Shilling"
+    },
+    {
+        "currency_code": "DKK",
+        "name": "Danish Krone"
+    },
+    {
+        "currency_code": "ZAR",
+        "name": "South African Rand"
+    },
+    {
+        "currency_code": "SAR",
+        "name": "Saudi Riyal"
+    },
+    {
+        "currency_code": "QAR",
+        "name": "Qatari Riyal"
+    },
+    {
+        "currency_code": "AED",
+        "name": "United Arab Emirates Dirham"
+    },
+    {
+        "currency_code": "KWD",
+        "name": "Kuwaiti Dinar"
+    },
+    {
+        "currency_code": "OMR",
+        "name": "Omani Rial"
+    },
+    {
+        "currency_code": "BHD",
+        "name": "Bahraini Dinar"
+    },
+    {
+        "currency_code": "JOD",
+        "name": "Jordanian Dinar"
+    },
+    {
+        "currency_code": "ILS",
+        "name": "Israeli Shekel"
+    },
+    {
+        "currency_code": "EGP",
+        "name": "Egyptian Pound"
+    },
+    {
+        "currency_code": "ETB",
+        "name": "Ethiopian Birr"
+    }
+]

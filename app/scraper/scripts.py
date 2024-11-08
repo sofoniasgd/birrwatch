@@ -567,8 +567,13 @@ def BERH(URL): # BeautifulSoup
                 "transactional_buying":  "0",
                 "transactional_selling": "0"
                     }
+            # change one misrepresented currency code to correct value
+            if data["currency"] == "YUA":
+                data["currency"] = "CNY"
             # store values
             exchange_rates.append(data)
+            
+            
         return {"status": "success", "bank_id": "BERH", "data": exchange_rates}
     except Exception as e:
         # let the error propagate

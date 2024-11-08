@@ -11,6 +11,7 @@ document.addEventListener('alpine:init', () => {
         selectedCurrency: 'All Currencies', // Currently selected currency
         filteredCashRates: [],
         filteredTransactionalRates: [],
+        currencyMap: new Map(),
 
         async fetchData() {
             try {
@@ -19,6 +20,8 @@ document.addEventListener('alpine:init', () => {
                 // get bank names from api call
                 const bankNames = await fetch('/api/banks');
                 const bankData = await bankNames.json();
+                // get currency names from api call
+                const currencyNames = await fetch('/api/currencies');
                 // replace bank id with bank name from bankData
                 data.cash_rates.forEach(rate => {
                     rate.bank_id = bankData.find(bank => bank.bank_id === rate.bank_id).name;
@@ -26,18 +29,30 @@ document.addEventListener('alpine:init', () => {
                 data.tx_rates.forEach(rate => {
                     rate.bank_id = bankData.find(bank => bank.bank_id === rate.bank_id).name;
                 });
-
-
+                // save currency names in a map
+                const currencyData = await currencyNames.json();
+                //console.log(currencyData);
+                const currencyMap = new Map();
+                currencyData.forEach(currency => {
+                    currencyMap.set(currency.currency_code, currency.name);
+                });
+                // add currency names from currencyMap to availableCurrencies list 
+                // with the format currency_code - currency_name
+                this.availableCurrencies = [...new Set(data.cash_rates.map(rate => {
+                    const currencyName = currencyMap.get(rate.currency_code);
+                    return `${rate.currency_code} - ${currencyName}`;
+                }))];
+                console.log(this.availableCurrencies);
                 // data contains two lists for cash and transactional rates
                 // split the data into two lists
                 this.cashRates = data.cash_rates || [];
-                console.log(this.cashRates);
+                //console.log(this.cashRates);
                 this.transactionalRates = data.tx_rates || [];
-                console.log(this.transactionalRates);
+                //console.log(this.transactionalRates);
 
-                // Populate available currencies
-                this.availableCurrencies = [...new Set(data.cash_rates.map(rate => rate.currency_code))];
-                console.log(this.availableCurrencies);
+                // Populate available currencies including currency code and name
+                //this.availableCurrencies = [...new Set(data.cash_rates.map(rate => rate.currency_code))];
+                //console.log(this.availableCurrencies);
 
                 // Apply initial filter
                 this.filterRates();

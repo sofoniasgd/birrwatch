@@ -4,7 +4,7 @@ from flask import Flask, jsonify, request, render_template, url_for
 from .scheduler import start_scheduler, stop_scheduler
 # import the app instance
 from app.app_instance import app
-from app.scraper.config import bank_url
+from app.scraper.config import bank_url, currency_codes
 
 # ===============================
 # app = Flask(__name__)
@@ -97,6 +97,47 @@ def get_banks_rates(currency_code):
     ]
     return jsonify(result)
 
+# get the best rates for a specific currency
+@app.route('/api/best_rates/<currency_code>', methods=['GET'])
+def get_best_rates(currency_code):
+    """Retrieve the best exchange rates for a specific currency."""
+    date = request.args.get('date')  # Optional date filter
+
+    query = ExchangeRates.query.filter_by(currency_code=currency_code)
+    if date:
+        query = query.filter(ExchangeRates.date == datetime.strptime(date, '%Y-%m-%d').date())
+    
+    # get the best cash and tx buying and selling rates, skip empty values
+    best_cash_buy = query.order_by(ExchangeRates.cash_buy.desc())
+    best_cash_sell = query.order_by(ExchangeRates.cash_sell.desc())
+    best_tx_buy = query.order_by(ExchangeRates.tx_buy.desc())
+    best_tx_sell = query.order_by(ExchangeRates.tx_sell.desc())
+    # remove every empty values from each query
+    best_cash_buy = best_cash_buy.filter(ExchangeRates.cash_buy != 0.0).first()
+    best_cash_sell = best_cash_sell.filter(ExchangeRates.cash_sell != 0.0).first()
+    best_tx_buy = best_tx_buy.filter(ExchangeRates.tx_buy != 0.0).first()
+    best_tx_sell = best_tx_sell.filter(ExchangeRates.tx_sell != 0.0).first()
+    
+    result = {
+        'best_cash_buy': {
+            'bank_id': best_cash_buy.bank_id,
+            'cash_buy': best_cash_buy.cash_buy
+        },
+        'best_cash_sell': {
+            'bank_id': best_cash_sell.bank_id,
+            'cash_sell': best_cash_sell.cash_sell
+        },
+        'best_tx_buy': {
+            'bank_id': best_tx_buy.bank_id,
+            'tx_buy': best_tx_buy.tx_buy
+        },
+        'best_tx_sell': {
+            'bank_id': best_tx_sell.bank_id,
+            'tx_sell': best_tx_sell.tx_sell
+        }
+    }
+    return jsonify(result)
+
 # get exchange rates for a specific bank and currency
 @app.route('/api/exchange_rates/<bank_id>/<currency_code>', methods=['GET'])
 def get_exchange_rates(bank_id, currency_code):
@@ -174,6 +215,13 @@ def get_banks():
     for key, value in bank_url.items():
         result.append({"bank_id": key, "name": value['name']})
     return jsonify(result)
+
+# endpoint to get all currencies with their codes
+@app.route('/api/currencies', methods=['GET'])
+def get_currencies():
+    """Retrieve all currencies with their codes."""
+    currencies = currency_codes
+    return jsonify(currencies)
 
 if __name__ == '__main__':
     app.run(debug=False)
