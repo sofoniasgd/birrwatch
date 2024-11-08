@@ -12,6 +12,7 @@ document.addEventListener('alpine:init', () => {
         filteredCashRates: [],
         filteredTransactionalRates: [],
         currencyMap: new Map(),
+        bestRates: {}, // Best rates for key currencies
 
         async fetchData() {
             try {
@@ -31,18 +32,80 @@ document.addEventListener('alpine:init', () => {
                 });
                 // save currency names in a map
                 const currencyData = await currencyNames.json();
-                //console.log(currencyData);
+
+                update_best_rates = async () => {
+                    // Update bestRates based on selected currency
+                    if (this.selectedCurrency !== 'All Currencies') {
+                        const selectedCurrencyCode = this.selectedCurrency.split(' - ')[0];
+                        const response = await fetch(`/api/best_rates/${selectedCurrencyCode}`);
+                        const rates = await response.json();
+
+                        // clear bestRates of any previous data
+                        Object.keys(this.bestRates).forEach(key => {
+                            delete this.bestRates[key];
+                        });
+
+                        this.bestRates[selectedCurrencyCode] = {
+                            best_cash_buy: {
+                                bank_name: bankData.find(bank => bank.bank_id === rates.best_cash_buy.bank_id).name,
+                                cash_buy: rates.best_cash_buy.cash_buy
+                            },
+                            best_cash_sell: {
+                                bank_name: bankData.find(bank => bank.bank_id === rates.best_cash_sell.bank_id).name,
+                                cash_sell: rates.best_cash_sell.cash_sell
+                            },
+                            best_tx_buy: {
+                                bank_name: bankData.find(bank => bank.bank_id === rates.best_tx_buy.bank_id).name,
+                                tx_buy: rates.best_tx_buy.tx_buy
+                            },
+                            best_tx_sell: {
+                                bank_name: bankData.find(bank => bank.bank_id === rates.best_tx_sell.bank_id).name,
+                                tx_sell: rates.best_tx_sell.tx_sell
+                            }
+                        };
+                    } else {
+                        // get key currency best rates from api call
+                        // use (USD, GBP, EUR, CAD, CNY) as key currencies
+                        const keyCurrencies = ['USD', 'GBP', 'EUR', 'CAD', 'CNY'];
+                        const bestRates = this.bestRates;
+                        for (const currency of keyCurrencies) {
+                            const response = await fetch(`/api/best_rates/${currency}`);
+                            const rates = await response.json();
+
+                            bestRates[currency] = {
+                                best_cash_buy: {
+                                    bank_name: bankData.find(bank => bank.bank_id === rates.best_cash_buy.bank_id).name,
+                                    cash_buy: rates.best_cash_buy.cash_buy
+                                },
+                                best_cash_sell: {
+                                    bank_name: bankData.find(bank => bank.bank_id === rates.best_cash_sell.bank_id).name,
+                                    cash_sell: rates.best_cash_sell.cash_sell
+                                },
+                                best_tx_buy: {
+                                    bank_name: bankData.find(bank => bank.bank_id === rates.best_tx_buy.bank_id).name,
+                                    tx_buy: rates.best_tx_buy.tx_buy
+                                },
+                                best_tx_sell: {
+                                    bank_name: bankData.find(bank => bank.bank_id === rates.best_tx_sell.bank_id).name,
+                                    tx_sell: rates.best_tx_sell.tx_sell
+                                }
+                            };
+                        }
+                    }
+                }
+                update_best_rates();
                 const currencyMap = new Map();
                 currencyData.forEach(currency => {
                     currencyMap.set(currency.currency_code, currency.name);
                 });
-                // add currency names from currencyMap to availableCurrencies list 
-                // with the format currency_code - currency_name
-                this.availableCurrencies = [...new Set(data.cash_rates.map(rate => {
-                    const currencyName = currencyMap.get(rate.currency_code);
-                    return `${rate.currency_code} - ${currencyName}`;
-                }))];
-                console.log(this.availableCurrencies);
+                // console.log(currencyMap);
+                // replace currency code in data with currency code and name
+                data.cash_rates.forEach(rate => {
+                    rate.currency_code = `${rate.currency_code} - ${currencyMap.get(rate.currency_code)}`;
+                });
+                data.tx_rates.forEach(rate => {
+                    rate.currency_code = `${rate.currency_code} - ${currencyMap.get(rate.currency_code)}`;
+                });
                 // data contains two lists for cash and transactional rates
                 // split the data into two lists
                 this.cashRates = data.cash_rates || [];
@@ -51,7 +114,7 @@ document.addEventListener('alpine:init', () => {
                 //console.log(this.transactionalRates);
 
                 // Populate available currencies including currency code and name
-                //this.availableCurrencies = [...new Set(data.cash_rates.map(rate => rate.currency_code))];
+                this.availableCurrencies = [...new Set(data.cash_rates.map(rate => rate.currency_code))];
                 //console.log(this.availableCurrencies);
 
                 // Apply initial filter
@@ -66,6 +129,7 @@ document.addEventListener('alpine:init', () => {
 
         selectCurrency(currency) { 
             this.selectedCurrency = currency;
+            update_best_rates();
             this.filterRates();
             this.sortData();
         },

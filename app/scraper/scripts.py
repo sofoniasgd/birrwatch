@@ -96,6 +96,9 @@ def DEET(URL): # selenium
             "transactional_selling": "0"
             }
             # append record to list
+            # change "KSH" to "KES"(same currency)
+            if data["currency"] == "KSH":
+                data["currency"] = "KES"
             exchange_rates.append(data)
         # return rates-list
         return {"status": "success", "bank_id": "DEET", "data": exchange_rates}

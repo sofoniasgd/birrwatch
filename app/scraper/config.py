@@ -187,6 +187,10 @@ currency_codes = [
         "name": "Kenyan Shilling"
     },
     {
+        "currency_code": "KSH",
+        "name": "Kenyan Shilling"
+    },
+    {
         "currency_code": "DKK",
         "name": "Danish Krone"
     },
@@ -229,6 +233,10 @@ currency_codes = [
     {
         "currency_code": "EGP",
         "name": "Egyptian Pound"
+    },
+    {
+        "currency_code": "SDR",
+        "name": "Special Drawing Rights"
     },
     {
         "currency_code": "ETB",

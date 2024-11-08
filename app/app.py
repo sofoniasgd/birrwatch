@@ -101,17 +101,21 @@ def get_banks_rates(currency_code):
 @app.route('/api/best_rates/<currency_code>', methods=['GET'])
 def get_best_rates(currency_code):
     """Retrieve the best exchange rates for a specific currency."""
-    date = request.args.get('date')  # Optional date filter
+    date = request.args.get('date')  # Optional date filter or use today
 
     query = ExchangeRates.query.filter_by(currency_code=currency_code)
     if date:
         query = query.filter(ExchangeRates.date == datetime.strptime(date, '%Y-%m-%d').date())
-    
+    else:
+        # use current date
+        today = datetime.utcnow().date()
+        query = query.filter(ExchangeRates.date == today)
+
     # get the best cash and tx buying and selling rates, skip empty values
     best_cash_buy = query.order_by(ExchangeRates.cash_buy.desc())
-    best_cash_sell = query.order_by(ExchangeRates.cash_sell.desc())
+    best_cash_sell = query.order_by(ExchangeRates.cash_sell.asc())
     best_tx_buy = query.order_by(ExchangeRates.tx_buy.desc())
-    best_tx_sell = query.order_by(ExchangeRates.tx_sell.desc())
+    best_tx_sell = query.order_by(ExchangeRates.tx_sell.asc())
     # remove every empty values from each query
     best_cash_buy = best_cash_buy.filter(ExchangeRates.cash_buy != 0.0).first()
     best_cash_sell = best_cash_sell.filter(ExchangeRates.cash_sell != 0.0).first()
@@ -222,6 +226,7 @@ def get_currencies():
     """Retrieve all currencies with their codes."""
     currencies = currency_codes
     return jsonify(currencies)
+
 
 if __name__ == '__main__':
     app.run(debug=False)

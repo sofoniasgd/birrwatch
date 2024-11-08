@@ -1,3 +1,9 @@
 th {
     cursor: pointer;
 }
+.fixed_div {
+    top: 250px;   /* Adjust the distance from the top */
+    right: 100px; /* Adjust the distance from the right side */
+    height: auto;  /* Optional: Set a fixed height if needed */
+    overflow: auto; /* If content overflows, add a scrollbar */
+}
