@@ -1,13 +1,12 @@
-![birrwatch logo](app/static/images/birrwatch1.png)
+a![birrwatch logo](app/static/images/birrwatch1.png)
 ## BirrWatch
 
 ### Badges
 ![Python version](https://img.shields.io/badge/python-3.8-blue?logo=python&logoColor=lime)
-![API Documentation](https://img.shields.io/badge/Swagger-API-blue)(http://localhost:5000/apidocs/)
+[![API Documentation](https://img.shields.io/badge/Swagger-API-blue)](http://localhost:5000/apidocs/)
 ![Flask Version](https://img.shields.io/badge/Flask-3.0.3-blue?logo=flask&logoColor=blask)
-![Alpine](https://img.shields.io/badge/AlpineJs-black?logo=alpinedotjs)
-![Static Badge](https://img.shields.io/badge/Chart-%2338c0c7?logo=chartdotjs)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![Alpine.js Badge](https://img.shields.io/badge/Alpine.js-8BC0D0?logo=alpinedotjs&logoColor=fff&style=for-the-badge)
+![Chart.js Badge](https://img.shields.io/badge/Chart.js-FF6384?logo=chartdotjs&logoColor=fff&style=for-the-badge)
 
 
 BirrWatch is a web platform that consolidates foreign exchange rates from multiple Ethiopian banks, providing users with up-to-date and easily accessible currency information. The platform automatically scrapes exchange rate data from over 20 banks and displays the rates in a simple, user-friendly interface.
@@ -93,5 +92,6 @@ Here are some of the key features and improvements i plan to add to this project
 - [ ] Deployment to production (e.g., Heroku, AWS)
 - [ ] Mobile app for real-time exchange rate alerts
 
-### License
+### License  
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)  
 This project is licensed under the MIT License.
