@@ -72,15 +72,5 @@ def script_caller():
             
     # close the session
     db.session.close()
-    # function call to calculate the historical metrics
 
 
-# function to calculate the historical metrics
-def calculate_historical_metrics():
-    """Calculate historical metrics for each bank."""
-    pass
-    # get all the banks
-    # get all the currencies
-    # get all the rates
-    # calculate the metrics
-    # store the metrics
