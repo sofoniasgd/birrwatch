@@ -1,4 +1,4 @@
-a![birrwatch logo](app/static/images/birrwatch1.png)
+![birrwatch logo](app/static/images/birrwatch1.png)
 ## BirrWatch
 
 ### Badges
