@@ -19,7 +19,7 @@ def scheduled_scraping():
 def start_scheduler():
     # Schedule the job to run at 4 AM every day
     # I'll run it now for testing
-    scheduler.add_job(scheduled_scraping, 'cron', hour=12, minute=27)
+    scheduler.add_job(scheduled_scraping, 'cron', hour=5, minute=00)
     """Starts the scheduler only if it's not already running."""
     if not scheduler.running:
         scheduler.start()
